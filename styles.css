@@ -1,0 +1,21 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  color: #eee;
+  background-color: #262626;
+}
+
+#buffer {
+  width: 600px;
+  height: 100vh;
+  background-color: #e30f4f;
+}
