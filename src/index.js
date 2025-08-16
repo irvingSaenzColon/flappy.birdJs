@@ -22,6 +22,11 @@ void main() {
 }`;
 
 
+//TODO: Hacer un GameObject genérico
+//TODO: Hacer un ShaderHandler genérico
+//TODO: Hacer una clase que ejecute toda la lógica del juego
+
+
 /**
  * runs the main logic for gl rendering
  */
@@ -57,6 +62,16 @@ function main() {
   const colorUniformLocation = WebGL.getUniformLocation(shaderProgram, 'u_color');
 
 
+  function updatePhysics() {
+    vertexPosition[1] += vy;
+    vertexPosition[3] += vy;
+    vertexPosition[5] += vy;
+    vertexPosition[7] += vy;
+    vertexPosition[9] += vy;
+    vertexPosition[11] += vy;
+  }
+
+
   function render() {
     //Output merger - how to merge the shaded pixel fragment with existing output image
     canvas.width = canvas.clientWidth;
@@ -69,6 +84,7 @@ function main() {
     // Rasterization - which pixels are part of a triangle
     WebGL.context.viewport(0.0, 0.0, canvas.width, canvas.height);
 
+    updatePhysics();
     //Set gpu program (vertex shader + fragment shader)
     WebGL.context.useProgram(shaderProgram);
     WebGL.context.enableVertexAttribArray(vertexPositionAttrLocation);
@@ -78,10 +94,6 @@ function main() {
     WebGL.context.uniform2f(resolutionUniformLocation, canvas.width, canvas.height);
     vy -= gravity;
     //TODO: Hacer que suba y baje
-    if(vertexPosition[1] > 50) {
-      jump();
-    }
-
     WebGL.context.uniform4f(colorUniformLocation, ...triangleColor)
     WebGL.context.bufferData(WebGL.context.ARRAY_BUFFER, new Float32Array(vertexPosition), WebGL.context.DYNAMIC_DRAW);
     WebGL.context.drawArrays(WebGL.context.TRIANGLES, 0, 6);
@@ -99,26 +111,19 @@ function main() {
   animationRequestId = window.requestAnimationFrame(render);
   window.addEventListener('keydown', (e) => {
     if(e.code === PLAYER_CONTROLLER.SPACE) {
-      console.log("Hola con espacio");
       vy = 12;
-      jump();
     }
   });
+}
 
 
-  function jump() {
-      vertexPosition[1] += vy;
-      vertexPosition[3] += vy;
-      vertexPosition[5] += vy;
-      vertexPosition[7] += vy;
-      vertexPosition[9] += vy;
-      vertexPosition[11] += vy;
-  }
+function main2() {
+  WebGL.initialize(canvas);
 }
 
 
 try {
-  main()
+  
 } catch(e) {
   console.error(e);
 }
