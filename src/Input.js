@@ -3,7 +3,7 @@ class Input {
 
   static setup(keyBindings) {
     this.keyBindings = keyBindings;
-    window.addEventListener('keydown', this.handle);
+    window.addEventListener('keydown', (e) => this.handle(e));
   }
 
 
@@ -12,11 +12,19 @@ class Input {
    * @param {KeyboardEvent} e 
    */
   static handle(e) {
+    if(!this.keyBindings[e.code]) {
+      return;
+    }
     this.keyBindings[e.code]();
   }
 
 
-  static dispose() {
+  static onKeyPressed(e) {
+
+  }
+
+
+  static destroy() {
     window.removeEventListener('keydown', this.handle);
   }
 }

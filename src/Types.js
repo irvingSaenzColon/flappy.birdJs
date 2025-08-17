@@ -1,9 +1,3 @@
-const Vec2 = {
-  x: 0,
-  y: 0,
-};
-
-
 const shaderParams = [
   {
     "shaderVariableName": "v_position",
@@ -15,5 +9,15 @@ const shaderParams = [
     "stride": "",
   }
 ];
+/**
+ * @typedef vec2
+ * @property { Number } x
+ * @property { Number } y
+ */
+/**
+ * @typedef Dimension
+ * @property { Number } width
+ * @property { Number } height
+ */
 
-export default { Vec2 };
+export default {};
