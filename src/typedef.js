@@ -10,7 +10,7 @@ const shaderParams = [
   }
 ];
 /**
- * @typedef vec2
+ * @typedef Vec2
  * @property { Number } x
  * @property { Number } y
  */

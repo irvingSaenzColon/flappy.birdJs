@@ -1,5 +1,5 @@
-/** @import * as typedef from './Types.js' */
-import WebGL from "./WebGL.js";
+/** @import * as typedef from './typedef.js' */
+import WebGL from "./webGL.js";
 
 
 class ShaderHandler {
@@ -8,20 +8,29 @@ class ShaderHandler {
     "UNIFORM": "uniform"
   }
 
+
   /**
    * @param {Object} shaderParams
    */
-  constructor(shaderParams = null) {
-    this.texture = null;
+  constructor(shaderParams = null, texture = null) {
+    this.texture = texture;
     this.shaderParams = shaderParams;
     this.vertexShader = null;
     this.fragmentShader = null;
     this.shaderProgram = null;
     this.vertexPositionAttrLocation = null;
     this.resolutionUniformLocation = null;
+    this.color = null;
+    if(!this.texture) {
+      this.color = [Math.random(), Math.random(), Math.random(), 1];
+    }
   }
 
 
+  /**
+   * @param { String } vertexShaderCode 
+   * @param { String } fragmentShaderCode 
+   */
   render(vertexShaderCode, fragmentShaderCode) {
     this.vertexBufferPosition = WebGL.context.createBuffer();
     if(this.vertexBufferPosition === null) {
@@ -37,7 +46,10 @@ class ShaderHandler {
     //Getting locations of some variables placed on shaders
     this.vertexPositionAttrLocation = WebGL.getAttributeLocation(this.shaderProgram, 'v_position');
     this.resolutionUniformLocation = WebGL.getUniformLocation(this.shaderProgram, 'resolution');
-    this.colorUniformLocation = WebGL.getUniformLocation(this.shaderProgram, 'u_color');
+    this.worldMatrixUniformLocation = WebGL.getUniformLocation(this.shaderProgram, 'u_worldMatrix')
+    if(!this.texture) {
+      this.colorUniformLocation = WebGL.getUniformLocation(this.shaderProgram, 'u_color');
+    }
     this.loadShaderParams();
   }
 
@@ -56,16 +68,19 @@ class ShaderHandler {
 
   /**
    * @param { Array<number> } vertexPosition
-   * @param { typedef.Dimension } canvas 
-   * @param { Array<number> } triangleColor 
+   * @param { typedef.Dimension } canvas
+   * @param { Array<Number> } wordlMatrix
    */
-  update(vertexPosition, canvas, triangleColor) {
+  update(vertexPosition, canvas, wordlMatrix) {
     WebGL.context.useProgram(this.shaderProgram);
     WebGL.context.enableVertexAttribArray(this.vertexPositionAttrLocation);
     WebGL.context.vertexAttribPointer(this.vertexPositionAttrLocation, 2, WebGL.context.FLOAT, false, 2 * Float32Array.BYTES_PER_ELEMENT, 0, 0);
     //TODO: load dynamicly params to shader to make it more generic
     WebGL.context.uniform2f(this.resolutionUniformLocation, canvas.width, canvas.height);
-    WebGL.context.uniform4f(this.colorUniformLocation, ...triangleColor);
+    WebGL.context.uniformMatrix3fv(this.worldMatrixUniformLocation, false, wordlMatrix);
+    if(!this.texture) {
+      WebGL.context.uniform4f(this.colorUniformLocation, ...this.color);
+    }
     WebGL.context.bufferData(WebGL.context.ARRAY_BUFFER, new Float32Array(vertexPosition), WebGL.context.DYNAMIC_DRAW);
     WebGL.context.drawArrays(WebGL.context.TRIANGLES, 0, (vertexPosition.length / 2));
   }
@@ -75,8 +90,9 @@ class ShaderHandler {
     WebGL.context.deleteBuffer(this.vertexBufferPosition);
     WebGL.context.deleteShader(this.vertexShader);
     WebGL.context.deleteShader(this.fragmentShader);
-    WebGL.context.deleteProgram(this.rProgram);
+    WebGL.context.deleteProgram(this.shaderProgram);
   }
 }
+
 
 export default ShaderHandler;

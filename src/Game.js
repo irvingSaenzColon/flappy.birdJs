@@ -1,11 +1,18 @@
-import WebGL from "./WebGL.js";
+import WebGL from "./webGL.js";
+import Ground from "./ground.js";
+import Pipe from "./pipe.js";
+import Obstacle from "./obstalce.js";
 import Player from "./player.js";
+
+
 const vertexShaderCode = `#version 300 es
 precision mediump float; 
 in vec2 v_position;
 uniform vec2 resolution;
+uniform mat3 u_worldMatrix;
 void main() {
-  vec2 clipSpace = ((v_position / resolution) * 2.0) - 1.0;
+  vec3 worldPosition = u_worldMatrix * vec3(v_position, 1.0);
+  vec2 clipSpace = ((worldPosition.xy / resolution) * 2.0) - 1.0;
   gl_Position = vec4(clipSpace, 0.0, 1.0); 
 }`;
 const fragmentShaderSourceCode = `#version 300 es
@@ -16,6 +23,7 @@ void main() {
   outputColor = u_color;
 }`;
 
+
 class Game {
 
 
@@ -24,13 +32,22 @@ class Game {
    */
   constructor(canvas) {
     this.canvas = canvas;
+    const canvasDimensions = {
+      width: canvas.clientWidth, 
+      height: canvas.clientHeight
+    };
+    const pipePos = {x: 30, y: -150};
     WebGL.initialize(canvas);
-    this.player = new Player([0, 0], [0, 0], [0, 0], null, {width: canvas.clientWidth, height: canvas.clientHeight});
+    this.player = new Player(null, canvasDimensions);
+    this.obstacle = new Obstacle(canvasDimensions);
+    this.ground = new Ground(canvasDimensions);
   }
 
 
   render() {
     this.player.render(vertexShaderCode, fragmentShaderSourceCode);
+    this.obstacle.render(vertexShaderCode, fragmentShaderSourceCode);
+    this.ground.render(vertexShaderCode, fragmentShaderSourceCode);
   }
 
 
@@ -44,15 +61,17 @@ class Game {
     WebGL.context.clearColor(0.0, 0.0, 0.0, 1.0);
     //Clears depth buffer
     WebGL.context.clear(WebGL.context.COLOR_BUFFER_BIT | WebGL.context.DEPTH_BUFFER_BIT);
-
-    // Rasterization - which pixels are part of a triangle
+    // Rasterization
     WebGL.context.viewport(0.0, 0.0, this.canvas.width, this.canvas.height);
     this.player.update();
+    this.obstacle.update();
+    this.ground.update();
   }
 
 
   destroy() {
     this.player.destroy();
+    this.ground.destroy();
   }
 }
 
