@@ -7,6 +7,7 @@ class Obstacle {
   static yOffset = 200;
   static yLimitPos = {min: -200, max: 80};
 
+
   /**
    * @param {typedef.Dimension} canvasDimensions 
    */

@@ -8,6 +8,7 @@ class Pipe extends GameObject {
   static DEFAULT_WIDTH = 100;
   static DEFAULT_HEIGHT = 400;
 
+
   /**
    * @param {typedef.Vec2} position
    * @param {typedef.Dimension} canvasDimensions 

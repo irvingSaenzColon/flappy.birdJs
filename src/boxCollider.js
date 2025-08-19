@@ -18,7 +18,6 @@ class BoxCollider extends Collider {
   /** @type { Array<Number> } */
   points = null;
   #localPoints = [];
-  //TODO: Cambiar BoxPoint por un arreglo de vértices
 
 
   /**
