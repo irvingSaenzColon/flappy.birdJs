@@ -1,4 +1,5 @@
 /** @import * as typedef from './typedef.js' */
+import Collider from './collider.js';
 import Matrix from './matrix.js';
 import ShaderHandler from './shaderHandler.js';
 
@@ -28,20 +29,20 @@ class GameObject {
     this.canvasDimensions = canvasDimensions;
     this.shader = new ShaderHandler(shaderParams, texture);
     this.wordlMatrix = Matrix.identity();
+    this.collider = new Collider();
   }
 
 
   update() {
-    /*
     if(this.gravity) {
       this.velocity.y -= this.gravity;
       for(let i = 0; i < this.vertex.length; i++) {
         if(i % 2 == 1) {
-          this.vertex[i] += this.velocity.y;
+          this.position.y += this.velocity.y;
         }
       }
     }
-    */
+    this.collider.update(this.position);
     this.calculateWorldMatrix();
     this.shader.update(this.vertex, this.canvasDimensions, this.wordlMatrix);
   }

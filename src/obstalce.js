@@ -7,6 +7,7 @@ class Obstacle {
   static yOffset = 200;
   static yLimitPos = {min: -200, max: 80};
 
+
   /**
    * @param {typedef.Dimension} canvasDimensions 
    */
@@ -49,6 +50,12 @@ class Obstacle {
       bottomPos: {x: xStartPos, y: yPossBott},
       topPos: {x: xStartPos, y: (yPossBott + Obstacle.yOffset + Pipe.DEFAULT_HEIGHT) }
     } 
+  }
+
+
+  destroy() {
+    this.pipeBottom.destroy();
+    this.pipeTop.destroy();
   }
 }
 

@@ -1,4 +1,5 @@
 /** @import * as typedef from './typedef.js' */
+import BoxCollider from "./boxCollider.js";
 import { plane } from "./figures.js";
 import GameObject from "./gameObject.js";
 
@@ -6,6 +7,7 @@ import GameObject from "./gameObject.js";
 class Pipe extends GameObject {
   static DEFAULT_WIDTH = 100;
   static DEFAULT_HEIGHT = 400;
+
 
   /**
    * @param {typedef.Vec2} position
@@ -16,8 +18,8 @@ class Pipe extends GameObject {
     const scale = {x: 1, y: 1};
     const rotation = 0;
     position = !position ? {x: 0, y: 0} : position;
-    console.log(position);
     super(vertex, null, position, rotation, scale, null, null, canvasDimensions);
+    this.collider = new BoxCollider(0, 0, Pipe.DEFAULT_WIDTH, Pipe.DEFAULT_HEIGHT);
   }
 }
 
