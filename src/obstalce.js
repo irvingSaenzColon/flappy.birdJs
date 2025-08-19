@@ -50,6 +50,12 @@ class Obstacle {
       topPos: {x: xStartPos, y: (yPossBott + Obstacle.yOffset + Pipe.DEFAULT_HEIGHT) }
     } 
   }
+
+
+  destroy() {
+    this.pipeBottom.destroy();
+    this.pipeTop.destroy();
+  }
 }
 
 

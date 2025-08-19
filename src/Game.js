@@ -1,6 +1,5 @@
 import WebGL from "./webGL.js";
 import Ground from "./ground.js";
-import Pipe from "./pipe.js";
 import Obstacle from "./obstalce.js";
 import Player from "./player.js";
 
@@ -84,6 +83,7 @@ class Game {
 
   destroy() {
     this.player.destroy();
+    this.obstacle.destroy();
     this.ground.destroy();
   }
 }
