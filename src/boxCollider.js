@@ -74,7 +74,7 @@ class BoxCollider extends Collider {
    * @returns { Boolean }
    */
   #isBoxColliding(collider) {
-    return this.points[BoxCollider.INDEX.X_BOTTOM_LEFT] <= collider.points[BoxCollider.INDEX.X_UPPER_LEFT] 
+    return this.points[BoxCollider.INDEX.X_BOTTOM_LEFT] <= collider.points[BoxCollider.INDEX.X_UPPER_RIGHT]
     && this.points[BoxCollider.INDEX.X_UPPER_RIGHT] >= collider.points[BoxCollider.INDEX.X_BOTTOM_LEFT]
     && this.points[BoxCollider.INDEX.Y_BOTTOM_LEFT] <= collider.points[BoxCollider.INDEX.Y_UPPER_RIGHT]
     && this.points[BoxCollider.INDEX.Y_UPPER_RIGHT] >= collider.points[BoxCollider.INDEX.Y_BOTTOM_LEFT];
