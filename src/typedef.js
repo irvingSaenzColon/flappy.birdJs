@@ -19,5 +19,18 @@ const shaderParams = [
  * @property { Number } width
  * @property { Number } height
  */
+/**
+ * @typedef Point
+ * @property { Number } x
+ * @property { Number } y
+ */
+/**
+ * @typedef BoxPoint
+ * @property { Point } BottomLeft
+ * @property { Point } BottomRight
+ * @property { Point } UpperLeft
+ * @property { Point } UpperRight
+ */
+
 
 export default {};

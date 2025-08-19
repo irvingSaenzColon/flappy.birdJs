@@ -36,7 +36,6 @@ class Game {
       width: canvas.clientWidth, 
       height: canvas.clientHeight
     };
-    const pipePos = {x: 30, y: -150};
     WebGL.initialize(canvas);
     this.player = new Player(null, canvasDimensions);
     this.obstacle = new Obstacle(canvasDimensions);
@@ -66,6 +65,20 @@ class Game {
     this.player.update();
     this.obstacle.update();
     this.ground.update();
+    if(this.ground.collider.isColliding(this.player.collider)) {
+      this.restart();
+    }
+    if(this.obstacle.pipeBottom.collider .isColliding(this.player.collider)) {
+      this.restart();
+    }
+    if(this.obstacle.pipeTop.collider.isColliding(this.player.collider)) {
+      this.restart();
+    }
+  }
+
+
+  restart() {
+    this.player.restart();
   }
 
 
