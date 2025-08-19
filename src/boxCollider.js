@@ -65,9 +65,6 @@ class BoxCollider extends Collider {
   }
 
 
-/*
-
-*/
   /**
    * @param { BoxCollider } collider
    * @returns { Boolean }

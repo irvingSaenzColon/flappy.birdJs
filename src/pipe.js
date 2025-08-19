@@ -5,7 +5,7 @@ import GameObject from "./gameObject.js";
 
 
 class Pipe extends GameObject {
-  static DEFAULT_WIDTH = 100;
+  static DEFAULT_WIDTH = 120;
   static DEFAULT_HEIGHT = 400;
 
 

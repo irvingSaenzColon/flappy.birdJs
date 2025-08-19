@@ -2,6 +2,7 @@ import WebGL from "./webGL.js";
 import Ground from "./ground.js";
 import Obstacle from "./obstalce.js";
 import Player from "./player.js";
+import Pipe from "./pipe.js";
 
 
 const vertexShaderCode = `#version 300 es
@@ -24,7 +25,7 @@ void main() {
 
 
 class Game {
-
+  static MAX_OBSTACLES = 3 ;
 
   /**
    * @param {HTMLCanvasElement} canvas
@@ -37,14 +38,21 @@ class Game {
     };
     WebGL.initialize(canvas);
     this.player = new Player(null, canvasDimensions);
-    this.obstacle = new Obstacle(canvasDimensions);
+    Obstacle.restartXLimitter = (canvasDimensions.width / Game.MAX_OBSTACLES) + Pipe.DEFAULT_WIDTH;
+    this.obstacles = Array.from({ length: Game.MAX_OBSTACLES }, (_, i) => {
+      let startPosition = canvasDimensions.width;
+      if(i) {
+        startPosition = startPosition + (Obstacle.restartXLimitter * i);
+      }
+      return new Obstacle(startPosition , canvasDimensions)
+    });
     this.ground = new Ground(canvasDimensions);
   }
 
 
   render() {
     this.player.render(vertexShaderCode, fragmentShaderSourceCode);
-    this.obstacle.render(vertexShaderCode, fragmentShaderSourceCode);
+    this.obstacles.forEach(o => o.render(vertexShaderCode, fragmentShaderSourceCode));
     this.ground.render(vertexShaderCode, fragmentShaderSourceCode);
   }
 
@@ -62,17 +70,18 @@ class Game {
     // Rasterization
     WebGL.context.viewport(0.0, 0.0, this.canvas.width, this.canvas.height);
     this.player.update();
-    this.obstacle.update();
+    this.obstacles.forEach(o => o.update());
     this.ground.update();
     if(this.ground.collider.isColliding(this.player.collider)) {
       this.restart();
     }
-    if(this.obstacle.pipeBottom.collider .isColliding(this.player.collider)) {
-      this.restart();
-    }
-    if(this.obstacle.pipeTop.collider.isColliding(this.player.collider)) {
-      this.restart();
-    }
+    this.obstacles.forEach(o => {
+      if(o.pipeTop.collider.isColliding(this.player.collider) || o.pipeBottom.collider.isColliding(this.player.collider)) {
+        console.log("Restart");
+      } else if(o.gapCollider.isColliding(this.player.collider)) {
+        console.log('Gana 1 punto');
+      }
+    });
   }
 
 
@@ -83,7 +92,7 @@ class Game {
 
   destroy() {
     this.player.destroy();
-    this.obstacle.destroy();
+    this.obstacles.forEach(o => o.destroy());
     this.ground.destroy();
   }
 }
