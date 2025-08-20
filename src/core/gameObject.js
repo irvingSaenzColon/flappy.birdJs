@@ -1,8 +1,7 @@
 /** @import * as typedef from './typedef.js' */
-import Collider from './collider.js';
+import Collider from '../collision/collider.js';
 import Matrix from './matrix.js';
 import ShaderHandler from './shaderHandler.js';
-
 
 
 class GameObject {
@@ -36,11 +35,7 @@ class GameObject {
   update() {
     if(this.gravity) {
       this.velocity.y -= this.gravity;
-      for(let i = 0; i < this.vertex.length; i++) {
-        if(i % 2 == 1) {
-          this.position.y += this.velocity.y;
-        }
-      }
+      this.position.y += this.velocity.y;
     }
     this.collider.update(this.position);
     this.calculateWorldMatrix();

@@ -1,11 +1,11 @@
 /** @import * as typedef from './typedef.js' */
-import BoxCollider from "./boxCollider.js";
-import { plane } from "./figures.js";
-import GameObject from "./gameObject.js";
+import GameObject from "../core/gameObject.js";
+import BoxCollider from "../collision/boxCollider.js";
+import { plane } from "../figures.js";
 
 
 class Pipe extends GameObject {
-  static DEFAULT_WIDTH = 100;
+  static DEFAULT_WIDTH = 120;
   static DEFAULT_HEIGHT = 400;
 
 

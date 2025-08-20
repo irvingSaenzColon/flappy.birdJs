@@ -1,6 +1,7 @@
 class Input {
   static keyBindings = null;
 
+
   static setup(keyBindings) {
     this.keyBindings = keyBindings;
     window.addEventListener('keydown', (e) => this.handle(e));
@@ -8,7 +9,6 @@ class Input {
 
 
   /**
-   * 
    * @param {KeyboardEvent} e 
    */
   static handle(e) {
@@ -16,11 +16,6 @@ class Input {
       return;
     }
     this.keyBindings[e.code]();
-  }
-
-
-  static onKeyPressed(e) {
-
   }
 
 
