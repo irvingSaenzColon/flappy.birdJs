@@ -50,12 +50,23 @@ class Game {
       return new Obstacle(startPosition , canvasDimensions)
     });
     this.ground = new Ground(canvasDimensions);
+    // Sound setup
+    this.soundType = {
+      "JUMP": 1,
+      "HIT": 2,
+      "SCORE": 3
+    }
+    SoundController.SOUND_FOLDER = './src/assets/sounds/';
+    SoundController.createAudio(this.soundType.JUMP, "wing.wav");
+    SoundController.createAudio(this.soundType.HIT, "hit.wav");
+    SoundController.createAudio(this.soundType.SCORE, "point.wav");
+    //Key bing setup
     this.keyBindings = {
       "Space": () => {
         if(this.pause || this.player.hitted) {
           return;
         }
-        SoundController.play(SoundController.SOUND_TYPE.JUMP);
+        SoundController.play(this.soundType.JUMP);
         this.player.jump();
       },
       "KeyR": () => {
@@ -99,18 +110,18 @@ class Game {
       this.stop = true;
       if(!this.player.hitted) {
         this.player.hitted = true;
-        SoundController.play(SoundController.SOUND_TYPE.HIT);
+        SoundController.play(this.soundType.HIT);
       }
     }
     this.obstacles.forEach(o => {
       if(!this.player.hitted && (o.pipeTop.collider.isColliding(this.player.collider) || o.pipeBottom.collider.isColliding(this.player.collider))) {
         Obstacle.speed = 0;
         this.player.hitted = true;
-        SoundController.play(SoundController.SOUND_TYPE.HIT);
+        SoundController.play(this.soundType.HIT);
       } else if(!o.gapHitted && o.gapCollider.isColliding(this.player.collider)) {
         this.score++;
         o.gapHitted = true;
-        SoundController.play(SoundController.SOUND_TYPE.SCORE);
+        SoundController.play(this.soundType.SCORE);
         console.log('Score is: ', this.score);
       }
     });
