@@ -31,14 +31,6 @@ const shaderParams = [
  * @property { Point } UpperLeft
  * @property { Point } UpperRight
  */
-/**
- * @enum
- */
-const SOUND_TYPE = {
-  "JUMP": 1,
-  "SCORE": 2,
-  "HIT": 3
-}
 
 
-export default { SOUND_TYPE };
+export default {};
