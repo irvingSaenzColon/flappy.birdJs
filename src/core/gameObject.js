@@ -1,5 +1,5 @@
 /** @import * as typedef from './typedef.js' */
-import Collider from './collider.js';
+import Collider from '../collision/collider.js';
 import Matrix from './matrix.js';
 import ShaderHandler from './shaderHandler.js';
 

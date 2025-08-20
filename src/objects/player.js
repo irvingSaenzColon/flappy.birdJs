@@ -1,14 +1,10 @@
-/** @import * as typedef from './typedef.js' */
-import BoxCollider from "./boxCollider.js";
-import { plane } from "./figures.js";
-import GameObject from "./gameObject.js";
-import Input from "./Input.js";
+/** @import * as typedef from '../core/typedef.js' */
+import BoxCollider from "../collision/boxCollider.js";
+import { plane } from "../figures.js";
+import GameObject from "../core/gameObject.js";
 
 
 class Player extends GameObject {
-  keyBindings = {
-    "Space": () => this.jump(),
-  }
 
 
   /**
@@ -28,11 +24,13 @@ class Player extends GameObject {
     const rotation = 0;
     super(vertex, texture, translate, rotation, scale, null, 0.12, canvasDimensions);
     this.collider = new BoxCollider(0, 0, width, height);
-    Input.setup(this.keyBindings);
+    this.hitted = false;
   }
 
 
   restart() {
+    this.hitted = false;
+    this.gravity = 0.12
     this.position.x = 30;
     this.position.y = 450;
     this.velocity.x = 0;

@@ -1,6 +1,5 @@
-/** @import * as typedef from './typedef.js' */
+/** @import * as typedef from '../core/typedef.js' */
 import Collider from './collider.js';
-import Matrix from './matrix.js';
 
 
 class BoxCollider extends Collider {

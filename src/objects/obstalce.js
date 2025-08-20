@@ -1,5 +1,5 @@
-/** @import * as typedef from './typedef.js' */
-import BoxCollider from "./boxCollider.js";
+/** @import * as typedef from '../core/typedef.js' */
+import BoxCollider from "../collision/boxCollider.js";
 import Pipe from "./pipe.js";
 
 
@@ -19,8 +19,9 @@ class Obstacle {
     const { bottomPos, topPos, gapPos } = this.generatePosition()
     this.pipeBottom = new Pipe(bottomPos, canvasDimensions);
     this.pipeTop = new Pipe(topPos, canvasDimensions);
-    this.gapPosition = gapPos ;
-    this.gapCollider = new BoxCollider(0, 0, Pipe.DEFAULT_WIDTH, Obstacle.yOffset);
+    this.gapPosition = gapPos;
+    this.gapHitted = false;
+    this.gapCollider = new BoxCollider(0, 0, (Pipe.DEFAULT_WIDTH / 2), Obstacle.yOffset);
   }
 
 
@@ -37,10 +38,7 @@ class Obstacle {
   update() {
     if(this.pipeBottom.position.x < -((Pipe.DEFAULT_WIDTH / 2) + Obstacle.restartXLimitter)) {
       this.xStart = this.canvasDimensions.width;
-      const {bottomPos, topPos, gapPos} = this.generatePosition();
-      this.pipeBottom.position = bottomPos;
-      this.pipeTop.position = topPos;
-      this.gapPosition = gapPos;
+      this.restart();
     } else {
       this.pipeBottom.position.x -= Obstacle.speed;
       this.pipeTop.position.x -= Obstacle.speed;
@@ -52,13 +50,22 @@ class Obstacle {
   }
 
 
+  restart() {
+    const {bottomPos, topPos, gapPos} = this.generatePosition();
+    this.pipeBottom.position = bottomPos;
+    this.pipeTop.position = topPos;
+    this.gapPosition = gapPos;
+    this.gapHitted = false;
+  }
+
+
   generatePosition() {
     const yPossBott = Math.floor(Math.random() * (Obstacle.yLimitPos.max - Obstacle.yLimitPos.min + 1) + Obstacle.yLimitPos.min);
     const xStartPos = ( this.xStart );
     return {
       bottomPos: {x: xStartPos, y: yPossBott},
       topPos: {x: xStartPos, y: (yPossBott + Obstacle.yOffset + Pipe.DEFAULT_HEIGHT) },
-      gapPos: {x: xStartPos, y: (yPossBott + Pipe.DEFAULT_HEIGHT )}
+      gapPos: {x: (xStartPos + (Pipe.DEFAULT_WIDTH / 2)), y: (yPossBott + Pipe.DEFAULT_HEIGHT )}
     } 
   }
 
