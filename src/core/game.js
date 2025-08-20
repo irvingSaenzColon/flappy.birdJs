@@ -65,9 +65,6 @@ class Game {
     this.pause = false;
   }
 
-  
-
-
 
   render() {
     this.player.render(vertexShaderCode, fragmentShaderSourceCode);

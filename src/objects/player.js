@@ -22,7 +22,7 @@ class Player extends GameObject {
     const scale = { x: 1, y: 1};
     const translate = { x: 30, y: 450};
     const rotation = 0;
-    super(vertex, texture, translate, rotation, scale, null, 0.12, canvasDimensions);
+    super(vertex, texture, translate, rotation, scale, null, 0.98, canvasDimensions);
     this.collider = new BoxCollider(0, 0, width, height);
     this.hitted = false;
   }
@@ -30,7 +30,7 @@ class Player extends GameObject {
 
   restart() {
     this.hitted = false;
-    this.gravity = 0.12
+    this.gravity = 0.98;
     this.position.x = 30;
     this.position.y = 450;
     this.velocity.x = 0;
@@ -39,7 +39,7 @@ class Player extends GameObject {
 
 
   jump() {
-    this.velocity.y = 1.8;
+    this.velocity.y = 14;
   }
 
 

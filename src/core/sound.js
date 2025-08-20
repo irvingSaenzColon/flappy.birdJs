@@ -1,5 +1,3 @@
-
-
 class SoundController {
   static SOUND_GENERAL_VOLUME = 1;
   static SOUND_FOLDER = './src/assets/sounds/';

@@ -5,7 +5,6 @@ const canvas = document.getElementById('buffer');
 let game = null;
 let idReqAnim = -1;
 try {
-  //main();
   game = new Game(canvas);
   game.render();
   window.requestAnimationFrame(loop);

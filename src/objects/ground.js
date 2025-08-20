@@ -19,7 +19,6 @@ class Ground extends GameObject {
     const rotation = 0;
     super(vertex, null, translate, rotation, scale, null, null, canvasDimensions);
     this.collider = new BoxCollider(0, 0, width, height);
-    this.static = true;
   }
 }
 
