@@ -34,6 +34,9 @@ class Game {
    * @param {HTMLCanvasElement} canvas
    */
   constructor(canvas) {
+    if(!canvas || !canvas instanceof HTMLCanvasElement) {
+      throw new Error('A canvas mus be provided');
+    }
     this.canvas = canvas;
     const canvasDimensions = {
       width: canvas.clientWidth, 
