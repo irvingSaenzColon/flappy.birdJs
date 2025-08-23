@@ -1,6 +1,7 @@
 /** @import * as typedef from '../core/typedef.js' */
 import BoxCollider from "../collision/boxCollider.js";
 import Pipe from "./pipe.js";
+import CONFIG from "../config.js";
 
 
 class Obstacle {
@@ -17,8 +18,12 @@ class Obstacle {
     this.xStart = xStart;
     this.canvasDimensions = canvasDimensions;
     const { bottomPos, topPos, gapPos } = this.generatePosition()
-    this.pipeBottom = new Pipe(bottomPos, canvasDimensions);
-    this.pipeTop = new Pipe(topPos, canvasDimensions);
+    const pipeTexturePath = `${CONFIG.TEXTURES_PATH}pipe/pipe.green.png`;
+    this.pipeBottom = new Pipe(canvasDimensions, pipeTexturePath);
+    this.pipeBottom.mesh.setPosition(bottomPos);
+    this.pipeTop = new Pipe(canvasDimensions, pipeTexturePath);
+    this.pipeTop.mesh.setPosition(topPos);
+    this.pipeTop.mesh.flipTexCoord();
     this.gapPosition = gapPos;
     this.gapHitted = false;
     this.gapCollider = new BoxCollider(0, 0, (Pipe.DEFAULT_WIDTH / 2), Obstacle.yOffset);
@@ -36,12 +41,12 @@ class Obstacle {
 
 
   update() {
-    if(this.pipeBottom.position.x < -((Pipe.DEFAULT_WIDTH / 2) + Obstacle.restartXLimitter)) {
+    if(this.pipeBottom.mesh.transform.translate.x < -((Pipe.DEFAULT_WIDTH / 2) + Obstacle.restartXLimitter)) {
       this.xStart = this.canvasDimensions.width;
       this.restart();
     } else {
-      this.pipeBottom.position.x -= Obstacle.speed;
-      this.pipeTop.position.x -= Obstacle.speed;
+      this.pipeBottom.mesh.transform.translate.x -= Obstacle.speed;
+      this.pipeTop.mesh.transform.translate.x -= Obstacle.speed;
       this.gapPosition.x -= Obstacle.speed;
     }
     this.pipeBottom.update();
@@ -52,8 +57,8 @@ class Obstacle {
 
   restart() {
     const {bottomPos, topPos, gapPos} = this.generatePosition();
-    this.pipeBottom.position = bottomPos;
-    this.pipeTop.position = topPos;
+    this.pipeBottom.mesh.setPosition(bottomPos);
+    this.pipeTop.mesh.setPosition(topPos);
     this.gapPosition = gapPos;
     this.gapHitted = false;
   }

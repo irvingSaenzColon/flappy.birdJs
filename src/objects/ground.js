@@ -1,24 +1,26 @@
 /** @import * as typedef from '../core/typedef.js' */
 import BoxCollider from "../collision/boxCollider.js";
-import { plane } from "../figures.js";
 import GameObject from "../core/gameObject.js";
+import Plane from "../core/plane.js";
 
 
 class Ground extends GameObject {
-
+  static GROUND_HEIGHT = 80;
 
   /**
-   * @param {typedef.Dimension} canvasDimensions 
+   * @param { typedef.Dimension } canvasDimensions 
+   * @param { String } textureName
    */
-  constructor(canvasDimensions) {
+  constructor(canvasDimensions, textureName) {
+    super(textureName, null, null, canvasDimensions);
     const width = canvasDimensions.width;
-    const height = 80;
-    const vertex = plane(canvasDimensions.width, height);
-    const scale = { x: 1, y: 1};
-    const translate = { x: 0, y: 0};
-    const rotation = 0;
-    super(vertex, null, translate, rotation, scale, null, null, canvasDimensions);
-    this.collider = new BoxCollider(0, 0, width, height);
+    const transform = {
+      translate: { x: 0, y: 0},
+      scale: { x: 1, y: 1},
+      rotation: 0,
+    }
+    this.mesh = new Plane(width, Ground.GROUND_HEIGHT, transform)
+    this.collider = new BoxCollider(0, 0, width, Ground.GROUND_HEIGHT);
   }
 }
 

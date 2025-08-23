@@ -1,7 +1,7 @@
 /** @import * as typedef from './typedef.js' */
 import GameObject from "../core/gameObject.js";
 import BoxCollider from "../collision/boxCollider.js";
-import { plane } from "../figures.js";
+import Plane from "../core/plane.js";
 
 
 class Pipe extends GameObject {
@@ -10,15 +10,17 @@ class Pipe extends GameObject {
 
 
   /**
-   * @param {typedef.Vec2} position
-   * @param {typedef.Dimension} canvasDimensions 
+   * @param { typedef.Dimension } canvasDimensions 
+   * @param { String } texture
    */
-  constructor(position = {x: 0, y: 0}, canvasDimensions) {
-    const vertex = plane(Pipe.DEFAULT_WIDTH, Pipe.DEFAULT_HEIGHT);
-    const scale = {x: 1, y: 1};
-    const rotation = 0;
-    position = !position ? {x: 0, y: 0} : position;
-    super(vertex, null, position, rotation, scale, null, null, canvasDimensions);
+  constructor(canvasDimensions, texture) {
+    super(texture, null, null, canvasDimensions);
+    const tranform = {
+      translate: {x: 0, y: 0},
+      scale: {x: 1, y: 1},
+      rotation: 0,
+    }
+    this.mesh = new Plane(Pipe.DEFAULT_WIDTH, Pipe.DEFAULT_HEIGHT, tranform);
     this.collider = new BoxCollider(0, 0, Pipe.DEFAULT_WIDTH, Pipe.DEFAULT_HEIGHT);
   }
 }

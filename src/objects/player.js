@@ -1,7 +1,7 @@
 /** @import * as typedef from '../core/typedef.js' */
 import BoxCollider from "../collision/boxCollider.js";
-import { plane } from "../figures.js";
 import GameObject from "../core/gameObject.js";
+import Plane from "../core/plane.js";
 
 
 class Player extends GameObject {
@@ -9,20 +9,19 @@ class Player extends GameObject {
 
   /**
    * 
-   * @param {typedef.Vec2} position 
-   * @param {*} texture 
-   * @param {typedef.Vec2} scale
-   * @param {Number} rotation 
-   * @param {typedef.Dimension} canvasDimensions 
+   * @param { typedef.Vec2 } position 
+   * @param { String } texture 
    */
-  constructor(texture, canvasDimensions) {
-    const width = 45;
-    const height = 45;
-    const vertex = plane(width, height);
-    const scale = { x: 1, y: 1};
-    const translate = { x: 30, y: 450};
-    const rotation = 0;
-    super(vertex, texture, translate, rotation, scale, null, 0.98, canvasDimensions);
+  constructor(canvasDimensions, texture) {
+    super(texture, null, 0.98, canvasDimensions);
+    const width = 54;
+    const height = 44;
+    const transform = {
+      translate: { x: 30, y: 450},
+      scale: { x: 1, y: 1},
+      rotation: 0,
+    }
+    this.mesh = new Plane(width, height, transform)
     this.collider = new BoxCollider(0, 0, width, height);
     this.hitted = false;
   }
@@ -31,8 +30,7 @@ class Player extends GameObject {
   restart() {
     this.hitted = false;
     this.gravity = 0.98;
-    this.position.x = 30;
-    this.position.y = 450;
+    this.mesh.transform.translate = { x: 30, y: 450 };
     this.velocity.x = 0;
     this.velocity.y = 0;
   }

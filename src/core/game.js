@@ -5,29 +5,46 @@ import Player from "../objects/player.js";
 import Pipe from "../objects/pipe.js";
 import Input from "./input.js";
 import SoundController from "./sound.js";
+import CONFIG from "../config.js";
+import Background from "../objects/background.js";
 
 
 const vertexShaderCode = `#version 300 es
 precision mediump float; 
 in vec2 v_position;
+in vec2 a_texCoord;
 uniform vec2 resolution;
 uniform mat3 u_worldMatrix;
+out vec2 v_texCoord;
 void main() {
   vec3 worldPosition = u_worldMatrix * vec3(v_position, 1.0);
   vec2 clipSpace = ((worldPosition.xy / resolution) * 2.0) - 1.0;
+  v_texCoord = a_texCoord;
   gl_Position = vec4(clipSpace, 0.0, 1.0); 
 }`;
 const fragmentShaderSourceCode = `#version 300 es
-precision mediump float; 
+precision mediump float;
+in vec2 v_texCoord;
 out vec4 outputColor;
 uniform vec4 u_color;
+uniform sampler2D u_texture;
 void main() {
-  outputColor = u_color;
+  vec4 textureColor = texture(u_texture, v_texCoord);
+  vec3 keyColor = vec3(0.015686, 0.988235, 0.015686);
+  float threshold = 0.4;
+  if (distance(textureColor.rgb, keyColor) < threshold) {
+    discard;
+  }
+  outputColor = textureColor;
 }`;
 
 
 class Game {
-  static MAX_OBSTACLES = 3 ;
+  static MAX_OBSTACLES = 3;
+  static CANVAS_DIMENSIONS = {
+    width: 0,
+    height: 0,
+  };
 
 
   /**
@@ -38,18 +55,21 @@ class Game {
       throw new Error('A canvas mus be provided');
     }
     this.canvas = canvas;
+    Game.CANVAS_DIMENSIONS.width = canvas.clientWidth;
+    Game.CANVAS_DIMENSIONS.height = canvas.clientHeight;
     const canvasDimensions = {
       width: canvas.clientWidth, 
       height: canvas.clientHeight
     };
     WebGL.initialize(canvas);
-    this.player = new Player(null, canvasDimensions);
+    this.background = new Background(canvasDimensions, `${CONFIG.TEXTURES_PATH}background/background.day.png`);
+    this.ground = new Ground(canvasDimensions, `${CONFIG.TEXTURES_PATH}background/ground.png`);
+    this.player = new Player(canvasDimensions, `${CONFIG.TEXTURES_PATH}bird/default/bird.midflap.png`);
     Obstacle.restartXLimitter = (canvasDimensions.width / Game.MAX_OBSTACLES) + Pipe.DEFAULT_WIDTH;
     this.obstacles = Array.from({ length: Game.MAX_OBSTACLES }, (_, i) => {
       let startPosition = canvasDimensions.width + (Obstacle.restartXLimitter * i);
       return new Obstacle(startPosition , canvasDimensions)
     });
-    this.ground = new Ground(canvasDimensions);
     // Sound setup
     this.soundType = {
       "JUMP": 1,
@@ -83,7 +103,8 @@ class Game {
   render() {
     this.player.render(vertexShaderCode, fragmentShaderSourceCode);
     this.obstacles.forEach(o => o.render(vertexShaderCode, fragmentShaderSourceCode));
-    this.ground.render(vertexShaderCode, fragmentShaderSourceCode);
+    this.background.render(vertexShaderCode, fragmentShaderSourceCode);
+    this.ground.render(vertexShaderCode, fragmentShaderSourceCode);;
   }
 
 
@@ -102,8 +123,9 @@ class Game {
     WebGL.context.clear(WebGL.context.COLOR_BUFFER_BIT | WebGL.context.DEPTH_BUFFER_BIT);
     // Rasterization
     WebGL.context.viewport(0.0, 0.0, this.canvas.width, this.canvas.height);
-    this.obstacles.forEach(o => o.update());
+    this.background.update();
     this.player.update();
+    this.obstacles.forEach(o => o.update());
     this.ground.update();
     if(this.ground.collider.isColliding(this.player.collider)) {
       this.player.gravity = 0;

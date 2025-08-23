@@ -1,62 +1,45 @@
 /** @import * as typedef from './typedef.js' */
 import Collider from '../collision/collider.js';
-import Matrix from './matrix.js';
 import ShaderHandler from './shaderHandler.js';
+import Mesh from './mesh.js';
+import Texture from './texture.js';
+import { planeTexCoords } from '../figures.js';
 
 
 class GameObject {
 
 
   /**
-   * @param { Array<Number>} vertex
-   * @param { Array<Number> } texture
+   * @param { String } textureName
    * @param { Objec} shaderParams
-   * @param { typedef.Vec2 } position
-   * @param { Number } rotation
-   * @param { typedef.Vec2 } scale
-   * @param { Object } shaderParams
    * @param { Number } gravity
    * @param { typedef.Dimension } canvasDimensions
    */
-  constructor(vertex, texture, position, rotation, scale, shaderParams, gravity = 0.98, canvasDimensions) {
-    this.vertex = vertex;
-    this.position = position;
-    this.roation = rotation;
-    this.scale = scale;
+  constructor(textureName, shaderParams, gravity = 0.98, canvasDimensions) {
+    this.mesh = new Mesh();
     this.gravity = gravity;
     this.velocity = {x: 0, y: 0};
     this.canvasDimensions = canvasDimensions;
-    this.shader = new ShaderHandler(shaderParams, texture);
-    this.wordlMatrix = Matrix.identity();
     this.collider = new Collider();
+    this.textureCoordinates = new Float32Array(planeTexCoords());
+    this.texture = new Texture(textureName, this.textureCoordinates);
+    this.shader = new ShaderHandler(shaderParams, this.texture);
   }
 
 
   update() {
     if(this.gravity) {
       this.velocity.y -= this.gravity;
-      this.position.y += this.velocity.y;
+      this.mesh.applyVelocity(this.velocity);
     }
-    this.collider.update(this.position);
-    this.calculateWorldMatrix();
-    this.shader.update(this.vertex, this.canvasDimensions, this.wordlMatrix);
+    this.collider.update(this.mesh.transform.translate);
+    this.mesh.calculateTransform();
+    this.shader.update(this.mesh.vertex, this.canvasDimensions, this.mesh.worldMatrix);
   }
-
-
-  calculateWorldMatrix() {
-    this.wordlMatrix = Matrix.identity();
-    const scaleM = Matrix.scaleMatrix(this.scale);
-    const rotationM = Matrix.rotationMatrix(this.roation);
-    const translateM = Matrix.traslateMatrix(this.position);
-    this.wordlMatrix = Matrix.multiply3x3Matrix(this.wordlMatrix, scaleM);
-    this.wordlMatrix = Matrix.multiply3x3Matrix(rotationM, this.wordlMatrix);
-    this.wordlMatrix = Matrix.multiply3x3Matrix(translateM, this.wordlMatrix);
-  }
-
 
 
   render(vertexShaderCode, fragmentShaderCode) {
-    this.shader.render(vertexShaderCode, fragmentShaderCode);
+    this.shader.render(vertexShaderCode, fragmentShaderCode, this.mesh.vertex, this.mesh.textureCoordinates);
   }
 
 

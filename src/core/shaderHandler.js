@@ -1,4 +1,5 @@
 /** @import * as typedef from './typedef.js' */
+/** @import Texture from './texture.js' */
 import WebGL from "./webGL.js";
 
 
@@ -10,7 +11,8 @@ class ShaderHandler {
 
 
   /**
-   * @param {Object} shaderParams
+   * @param { Object } shaderParams
+   * @param { Texture | null } texture
    */
   constructor(shaderParams = null, texture = null) {
     this.texture = texture;
@@ -20,6 +22,9 @@ class ShaderHandler {
     this.shaderProgram = null;
     this.vertexPositionAttrLocation = null;
     this.resolutionUniformLocation = null;
+    //Texture coordinates declaration
+    this.textureCoordinatesBuffer = null;
+    this.textureCoordinatesLocation = null;
     this.color = null;
     if(!this.texture) {
       this.color = [Math.random(), Math.random(), Math.random(), 1];
@@ -31,38 +36,66 @@ class ShaderHandler {
    * @param { String } vertexShaderCode 
    * @param { String } fragmentShaderCode 
    */
-  render(vertexShaderCode, fragmentShaderCode) {
-    this.vertexBufferPosition = WebGL.context.createBuffer();
-    if(this.vertexBufferPosition === null) {
-      throw new Error('Error while creating buffer');
-    }
-
-    WebGL.context.bindBuffer(WebGL.context.ARRAY_BUFFER, this.vertexBufferPosition);
-
+  #setup(vertexShaderCode, fragmentShaderCode) {
+    //Create shader programs and compiles
     this.vertexShader = WebGL.createShader(WebGL.context.VERTEX_SHADER, vertexShaderCode);
     this.fragmentShader = WebGL.createShader(WebGL.context.FRAGMENT_SHADER, fragmentShaderCode);
     this.shaderProgram = WebGL.createShaderProgram(this.vertexShader, this.fragmentShader);
 
     //Getting locations of some variables placed on shaders
     this.vertexPositionAttrLocation = WebGL.getAttributeLocation(this.shaderProgram, 'v_position');
-    this.resolutionUniformLocation = WebGL.getUniformLocation(this.shaderProgram, 'resolution');
-    this.worldMatrixUniformLocation = WebGL.getUniformLocation(this.shaderProgram, 'u_worldMatrix')
-    if(!this.texture) {
-      this.colorUniformLocation = WebGL.getUniformLocation(this.shaderProgram, 'u_color');
-    }
-    this.loadShaderParams();
+    this.textureCoordinatesAttrLocation = WebGL.getAttributeLocation(this.shaderProgram, 'a_texCoord');
   }
 
 
-  loadShaderParams() {
-    if(!this.shaderParams) {
-      return;
+  /**
+   * @param { Float32Array } vertexPosition 
+   */
+  #setupGeometryBuffer(vertexPosition) {
+    this.vertexBufferPosition = WebGL.context.createBuffer();
+    if(this.vertexBufferPosition === null) {
+      throw new Error('Error while creating buffer');
     }
-    for(const i in this.shaderParams) {
-      if(this.shaderParams[i].type === ShaderHandler.SHADER_LOCATION_TYPE.UNIFORM) {
-        this[this.shaderParams[i].name] = WebGL.getUniformLocation(this.shaderProgram, this.shaderParams[i].shaderVariableName);
-      }
+    WebGL.context.bindBuffer(WebGL.context.ARRAY_BUFFER, this.vertexBufferPosition);
+    WebGL.context.bufferData(WebGL.context.ARRAY_BUFFER, vertexPosition, WebGL.context.STATIC_DRAW);
+  }
+
+
+  /**
+   * @param { Float32Array } texCoord
+   */
+  #setupTextureBuffer(texCoord) {
+    //Creating texture coordinates buffer
+    this.textureCoordinatesBuffer = WebGL.context.createBuffer();
+    if(this.textureCoordinatesBuffer === null) {
+      throw new Error('Error while creating textCoordBuffer');
     }
+    WebGL.context.bindBuffer(WebGL.context.ARRAY_BUFFER, this.textureCoordinatesBuffer);
+    WebGL.context.bufferData(WebGL.context.ARRAY_BUFFER, texCoord, WebGL.context.STATIC_DRAW);
+  }
+
+
+  #setupLocations() {
+    this.resolutionUniformLocation = WebGL.getUniformLocation(this.shaderProgram, 'resolution');
+    this.worldMatrixUniformLocation = WebGL.getUniformLocation(this.shaderProgram, 'u_worldMatrix');
+    this.samplerUniformLocation = WebGL.getUniformLocation(this.shaderProgram, "u_texture");
+  }
+
+
+  /**
+   * @param { String } vertexShaderCode
+   * @param { String } fragmentShaderCode
+   * @param { Float32Array } vertexPosition
+   * @param { Float32Array } texCoord
+   */
+  render(vertexShaderCode, fragmentShaderCode, vertexPosition, texCoord) {
+    this.#setup(vertexShaderCode, fragmentShaderCode);
+    //Setup geometry
+    this.#setupGeometryBuffer(vertexPosition);
+    //Setup texture
+    this.#setupTextureBuffer(texCoord);
+    //Setup locations
+    this.#setupLocations();
   }
 
 
@@ -71,23 +104,29 @@ class ShaderHandler {
    * @param { typedef.Dimension } canvas
    * @param { Array<Number> } wordlMatrix
    */
-  update(vertexPosition, canvas, wordlMatrix) {
+  update(vertex, canvas, wordlMatrix) {
     WebGL.context.useProgram(this.shaderProgram);
+    //Vertext attribute location assign
     WebGL.context.enableVertexAttribArray(this.vertexPositionAttrLocation);
-    WebGL.context.vertexAttribPointer(this.vertexPositionAttrLocation, 2, WebGL.context.FLOAT, false, 2 * Float32Array.BYTES_PER_ELEMENT, 0, 0);
-    //TODO: load dynamicly params to shader to make it more generic
+    WebGL.context.bindBuffer(WebGL.context.ARRAY_BUFFER, this.vertexBufferPosition);
+    WebGL.context.vertexAttribPointer(this.vertexPositionAttrLocation, 2, WebGL.context.FLOAT, false, 2 * Float32Array.BYTES_PER_ELEMENT, 0);
+    WebGL.context.ARRAY_BUFFER, this.vertexBufferPosition
+    //Texture attribute location assign
+    WebGL.context.enableVertexAttribArray(this.textureCoordinatesAttrLocation);
+    WebGL.context.bindBuffer(WebGL.context.ARRAY_BUFFER, this.textureCoordinatesBuffer);
+    WebGL.context.vertexAttribPointer(this.textureCoordinatesAttrLocation, 2, WebGL.context.FLOAT, false, 2 * Float32Array.BYTES_PER_ELEMENT, 0);
     WebGL.context.uniform2f(this.resolutionUniformLocation, canvas.width, canvas.height);
     WebGL.context.uniformMatrix3fv(this.worldMatrixUniformLocation, false, wordlMatrix);
-    if(!this.texture) {
-      WebGL.context.uniform4f(this.colorUniformLocation, ...this.color);
+    if(this.texture) {
+      this.texture.bind(0, this.samplerUniformLocation);
     }
-    WebGL.context.bufferData(WebGL.context.ARRAY_BUFFER, new Float32Array(vertexPosition), WebGL.context.DYNAMIC_DRAW);
-    WebGL.context.drawArrays(WebGL.context.TRIANGLES, 0, (vertexPosition.length / 2));
+    WebGL.context.drawArrays(WebGL.context.TRIANGLES, 0, (vertex.length / 2));
   }
 
 
   destroy() {
     WebGL.context.deleteBuffer(this.vertexBufferPosition);
+    WebGL.context.deleteBuffer(this.textureCoordinatesBuffer);
     WebGL.context.deleteShader(this.vertexShader);
     WebGL.context.deleteShader(this.fragmentShader);
     WebGL.context.deleteProgram(this.shaderProgram);
