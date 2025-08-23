@@ -3,7 +3,6 @@ import Collider from '../collision/collider.js';
 import ShaderHandler from './shaderHandler.js';
 import Mesh from './mesh.js';
 import Texture from './texture.js';
-import { planeTexCoords } from '../figures.js';
 
 
 class GameObject {
@@ -21,7 +20,6 @@ class GameObject {
     this.velocity = {x: 0, y: 0};
     this.canvasDimensions = canvasDimensions;
     this.collider = new Collider();
-    this.textureCoordinates = new Float32Array(planeTexCoords());
     this.texture = new Texture(textureName, this.textureCoordinates);
     this.shader = new ShaderHandler(shaderParams, this.texture);
   }
@@ -30,6 +28,9 @@ class GameObject {
   update() {
     if(this.gravity) {
       this.velocity.y -= this.gravity;
+      if(this.mesh.transform.rotation < 450) {
+        this.mesh.transform.rotation += 2.5;
+      }
       this.mesh.applyVelocity(this.velocity);
     }
     this.collider.update(this.mesh.transform.translate);

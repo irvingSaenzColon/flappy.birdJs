@@ -21,7 +21,7 @@ class Pipe extends GameObject {
       rotation: 0,
     }
     this.mesh = new Plane(Pipe.DEFAULT_WIDTH, Pipe.DEFAULT_HEIGHT, tranform);
-    this.collider = new BoxCollider(0, 0, Pipe.DEFAULT_WIDTH, Pipe.DEFAULT_HEIGHT);
+    this.collider = new BoxCollider(-this.mesh.center.x, -this.mesh.center.y, this.mesh.center.x, this.mesh.center.y);
   }
 }
 

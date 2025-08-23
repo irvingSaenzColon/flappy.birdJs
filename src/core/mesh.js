@@ -31,9 +31,8 @@ class Mesh {
     const scaleM = Matrix.scaleMatrix(this.transform.scale);
     const rotationM = Matrix.rotationMatrix(this.transform.rotation);
     const translateM = Matrix.traslateMatrix(this.transform.translate);
-    this.worldMatrix = Matrix.multiply3x3Matrix(this.worldMatrix, scaleM);
-    this.worldMatrix = Matrix.multiply3x3Matrix(this.worldMatrix, rotationM);
-    this.worldMatrix = Matrix.multiply3x3Matrix(translateM, this.worldMatrix);
+    const SR = Matrix.multiply3x3Matrix(scaleM, rotationM);
+    this.worldMatrix = Matrix.multiply3x3Matrix(SR, translateM);
   }
 }
 

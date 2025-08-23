@@ -17,12 +17,12 @@ class Player extends GameObject {
     const width = 54;
     const height = 44;
     const transform = {
-      translate: { x: 30, y: 450},
+      translate: { x: 50, y: 450},
       scale: { x: 1, y: 1},
-      rotation: 0,
+      rotation: 315,
     }
     this.mesh = new Plane(width, height, transform)
-    this.collider = new BoxCollider(0, 0, width, height);
+    this.collider = new BoxCollider(-this.mesh.center.x,  -this.mesh.center.y, this.mesh.center.x, this.mesh.center.y);
     this.hitted = false;
   }
 
@@ -30,14 +30,15 @@ class Player extends GameObject {
   restart() {
     this.hitted = false;
     this.gravity = 0.98;
-    this.mesh.transform.translate = { x: 30, y: 450 };
+    this.mesh.transform.translate = { x: 50, y: 450 };
     this.velocity.x = 0;
     this.velocity.y = 0;
   }
 
 
   jump() {
-    this.velocity.y = 14;
+    this.velocity.y = 13.5;
+    this.mesh.transform.rotation = 315;
   }
 
 

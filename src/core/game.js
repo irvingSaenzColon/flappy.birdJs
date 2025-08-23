@@ -124,11 +124,12 @@ class Game {
     // Rasterization
     WebGL.context.viewport(0.0, 0.0, this.canvas.width, this.canvas.height);
     this.background.update();
-    this.player.update();
     this.obstacles.forEach(o => o.update());
     this.ground.update();
+    this.player.update();
     if(this.ground.collider.isColliding(this.player.collider)) {
       this.player.gravity = 0;
+      this.player.velocity.y = 0;
       this.stop = true;
       if(!this.player.hitted) {
         this.player.hitted = true;
@@ -136,7 +137,9 @@ class Game {
       }
     }
     this.obstacles.forEach(o => {
-      if(!this.player.hitted && (o.pipeTop.collider.isColliding(this.player.collider) || o.pipeBottom.collider.isColliding(this.player.collider))) {
+      const isCollidingTop = o.pipeTop.collider.isColliding(this.player.collider);
+      const isCollidingBottom = o.pipeBottom.collider.isColliding(this.player.collider)
+      if(!this.player.hitted && (isCollidingTop == true || isCollidingBottom == true)) {
         Obstacle.speed = 0;
         this.player.hitted = true;
         SoundController.play(this.soundType.HIT);

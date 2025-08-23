@@ -66,6 +66,7 @@ class Matrix {
     ];
   }
 
+
   /**
    * 
    * @param { Number } rotation 
@@ -74,8 +75,8 @@ class Matrix {
     const rads = this.degreeToRad(rotation);
     let cos = Math.cos(rads);
     let sin = Math.sin(rads);
-    cos = cos < this.EPSILON ? 0 : cos;
-    sin = sin < this.EPSILON ? 0 : sin;
+    cos = Math.abs(cos) < this.EPSILON ? 0 : cos;
+    sin = Math.abs(sin) < this.EPSILON ? 0 : sin;
     return [
       cos, - sin, 0,
       sin, cos, 0,
