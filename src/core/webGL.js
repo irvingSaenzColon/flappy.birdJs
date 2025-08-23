@@ -30,7 +30,7 @@ class WebGL {
    */
   static createShader(type, sourceCode) {
     if(!sourceCode) {
-      throw new Error('Missing shader code');
+      throw new Error('Missing shader source code');
     }
     if(!type) {
       throw new Error("Shader type must be provided");

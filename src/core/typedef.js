@@ -31,6 +31,11 @@ const shaderParams = [
  * @property { Point } UpperLeft
  * @property { Point } UpperRight
  */
-
+/**
+ * @typedef Transform
+ * @property { Vec2 } translate
+ * @property { Vec2 } scale
+ * @property { Number } rotation
+ */
 
 export default {};

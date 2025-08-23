@@ -10,4 +10,16 @@ function plane(base, height) {
 }
 
 
-export { plane }
+function planeTexCoords() {
+  return [
+    0.0, 1.0,
+    1.0, 1.0,
+    0.0, 0.0,
+    0.0, 0.0,
+    1.0, 1.0,
+    1.0, 0.0,
+  ]
+}
+
+
+export { plane, planeTexCoords }
