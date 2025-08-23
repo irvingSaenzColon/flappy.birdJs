@@ -12,7 +12,6 @@ class BoxCollider extends Collider {
     Y_UPPER_LEFT: 5,
     X_UPPER_RIGHT: 6,
     Y_UPPER_RIGHT: 7,
-    
   }
   /** @type { Array<Number> } */
   points = null;

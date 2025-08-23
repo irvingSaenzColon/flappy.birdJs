@@ -19,8 +19,8 @@ class Ground extends GameObject {
       scale: { x: 1, y: 1},
       rotation: 0,
     }
-    this.mesh = new Plane(width, Ground.GROUND_HEIGHT, transform)
-    this.collider = new BoxCollider(0, 0, width, Ground.GROUND_HEIGHT);
+    this.mesh = new Plane(width, Ground.GROUND_HEIGHT, transform);
+    this.collider = new BoxCollider(-this.mesh.center.x, -this.mesh.center.y, this.mesh.center.x, this.mesh.center.y);
   }
 }
 
