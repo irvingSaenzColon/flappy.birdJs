@@ -13,7 +13,7 @@ class Player extends GameObject {
    * @param { String } texture 
    */
   constructor(canvasDimensions, texture) {
-    super(texture, null, 0.98, canvasDimensions, true);
+    super(texture, null, 2500, canvasDimensions, true);
     const width = 54;
     const height = 44;
     const transform = {
@@ -29,7 +29,7 @@ class Player extends GameObject {
 
   restart() {
     this.hitted = false;
-    this.gravity = 0.98;
+    this.gravity = 2500;
     this.mesh.transform.translate = { x: 100, y: 450 };
     this.velocity.x = 0;
     this.velocity.y = 0;
@@ -37,7 +37,7 @@ class Player extends GameObject {
 
 
   jump() {
-    this.velocity.y = 13.5;
+    this.velocity.y = 625;
     this.mesh.transform.rotation = 315;
   }
 
