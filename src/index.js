@@ -5,13 +5,17 @@ import Timer from "./core/Timer.js";
 const canvas = document.getElementById('buffer');
 let game = null;
 let idReqAnim = -1;
-try {
-  game = new Game(canvas);
-  await game.render();
-  window.requestAnimationFrame(loop);
-  window.removeEventListener('beforeunload', destroy);
-} catch(e) {
-  console.error(e);
+
+
+async function main() {
+  try {
+    game = new Game(canvas);
+    await game.render();
+    window.requestAnimationFrame(loop);
+    window.removeEventListener('beforeunload', destroy);
+  } catch(e) {
+    console.error(e);
+  }
 }
 
 
@@ -30,3 +34,8 @@ function destroy(e) {
     game.destroy();
   }
 }
+
+
+document.addEventListener('DOMContentLoaded', (e) => {
+  main();
+})
