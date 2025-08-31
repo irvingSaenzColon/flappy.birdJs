@@ -161,7 +161,7 @@ class Game {
       o.xStart = this.canvas.clientWidth + (Obstacle.restartXLimitter * i);
       o.restart() ;
     });
-    Obstacle.speed = 2.5;
+    Obstacle.speed = 150;
     ScoreSystem.reseyCounter();
     this.stop = false;
   }

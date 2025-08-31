@@ -3,6 +3,7 @@ import Collider from '../collision/collider.js';
 import ShaderHandler from './shaderHandler.js';
 import Mesh from './mesh.js';
 import Texture from './texture.js';
+import Timer from './Timer.js';
 
 
 class GameObject {
@@ -31,9 +32,9 @@ class GameObject {
 
   update() {
     if(this.gravity) {
-      this.velocity.y -= this.gravity;
+      this.velocity.y -= (this.gravity * Timer.getDelta());
       if(this.mesh.transform.rotation < 450) {
-        this.mesh.transform.rotation += 2.5;
+        this.mesh.transform.rotation += (150 * Timer.getDelta());
       }
       this.mesh.applyVelocity(this.velocity);
     }

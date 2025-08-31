@@ -147,23 +147,6 @@ class ScoreSystem {
   static reseyCounter() {
     this.#counter = 0;
   }
-
-  /**
-   *
-    0.0, 1.0,
-    1.0, 1.0,
-    0.0, 0.0,
-    0.0, 0.0,
-    1.0, 1.0,
-    1.0, 0.0,
-   */
-
-  //TODO definir las coordenadas de texturas de cada número del sprite
-  // Max size of image: 232
-  // Width of 0 number: 0px 22px of width
-  // 232 - 01
-  // 35  - 0.1
-  // texcoord:0,
 }
 
 

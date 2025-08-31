@@ -1,4 +1,5 @@
 import Game from "./core/game.js";
+import Timer from "./core/Timer.js";
 
 
 const canvas = document.getElementById('buffer');
@@ -14,8 +15,9 @@ try {
 }
 
 
-function loop(dt) {
-  game.update(dt);
+function loop(currTime) {
+  Timer.setPrevTime(currTime)
+  game.update();
   window.requestAnimationFrame(loop);
 }
 
