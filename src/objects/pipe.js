@@ -14,7 +14,7 @@ class Pipe extends GameObject {
    * @param { String } texture
    */
   constructor(canvasDimensions, texture) {
-    super(texture, null, null, canvasDimensions);
+    super(texture, null, null, canvasDimensions, true);
     const tranform = {
       translate: {x: 0, y: 0},
       scale: {x: 1, y: 1},

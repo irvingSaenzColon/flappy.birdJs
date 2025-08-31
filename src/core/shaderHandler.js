@@ -101,19 +101,20 @@ class ShaderHandler {
 
   /**
    * @param { Array<number> } vertexPosition
+   * @param { Array<Number> } texCoord 
    * @param { typedef.Dimension } canvas
    * @param { Array<Number> } wordlMatrix
    */
-  update(vertex, canvas, wordlMatrix) {
+  update(vertex, texCoord, canvas, wordlMatrix) {
     WebGL.context.useProgram(this.shaderProgram);
     //Vertext attribute location assign
     WebGL.context.enableVertexAttribArray(this.vertexPositionAttrLocation);
     WebGL.context.bindBuffer(WebGL.context.ARRAY_BUFFER, this.vertexBufferPosition);
     WebGL.context.vertexAttribPointer(this.vertexPositionAttrLocation, 2, WebGL.context.FLOAT, false, 2 * Float32Array.BYTES_PER_ELEMENT, 0);
-    WebGL.context.ARRAY_BUFFER, this.vertexBufferPosition
     //Texture attribute location assign
     WebGL.context.enableVertexAttribArray(this.textureCoordinatesAttrLocation);
     WebGL.context.bindBuffer(WebGL.context.ARRAY_BUFFER, this.textureCoordinatesBuffer);
+    WebGL.context.bufferData(WebGL.context.ARRAY_BUFFER, texCoord, WebGL.context.STATIC_DRAW);
     WebGL.context.vertexAttribPointer(this.textureCoordinatesAttrLocation, 2, WebGL.context.FLOAT, false, 2 * Float32Array.BYTES_PER_ELEMENT, 0);
     WebGL.context.uniform2f(this.resolutionUniformLocation, canvas.width, canvas.height);
     WebGL.context.uniformMatrix3fv(this.worldMatrixUniformLocation, false, wordlMatrix);
