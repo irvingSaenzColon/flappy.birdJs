@@ -12,7 +12,7 @@ class Ground extends GameObject {
    * @param { String } textureName
    */
   constructor(canvasDimensions, textureName) {
-    super(textureName, null, null, canvasDimensions);
+    super(textureName, null, null, canvasDimensions, true);
     const width = canvasDimensions.width;
     const transform = {
       translate: { x: 0, y: 0},
