@@ -101,12 +101,14 @@ class Game {
   }
 
 
-  render() {
-    this.player.render(vertexShaderCode, fragmentShaderSourceCode);
-    this.obstacles.forEach(o => o.render(vertexShaderCode, fragmentShaderSourceCode));
-    this.background.render(vertexShaderCode, fragmentShaderSourceCode);
-    this.ground.render(vertexShaderCode, fragmentShaderSourceCode);;
-    this.scoreSystem.render(vertexShaderCode, fragmentShaderSourceCode);
+  async render() {
+    await this.player.render(vertexShaderCode, fragmentShaderSourceCode);
+    await this.background.render(vertexShaderCode, fragmentShaderSourceCode);
+    await this.ground.render(vertexShaderCode, fragmentShaderSourceCode);;
+    await this.scoreSystem.render(vertexShaderCode, fragmentShaderSourceCode);
+    for(let i = 0; i < this.obstacles.length; i++) {
+      await this.obstacles[i].render(vertexShaderCode, fragmentShaderSourceCode);
+    }
   }
 
 
