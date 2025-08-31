@@ -46,8 +46,8 @@ class GameObject {
   }
 
 
-  render(vertexShaderCode, fragmentShaderCode) {
-    this.shader.render(vertexShaderCode, fragmentShaderCode, this.mesh.vertex, this.mesh.textureCoordinates);
+  async render(vertexShaderCode, fragmentShaderCode) {
+    await this.shader.render(vertexShaderCode, fragmentShaderCode, this.mesh.vertex, this.mesh.textureCoordinates);
   }
 
 

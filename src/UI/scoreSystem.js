@@ -120,15 +120,17 @@ class ScoreSystem {
    * @param { String } vertexShaderCode 
    * @param { String } fragmentShaderCode 
    */
-  render(vertexShaderCode, fragmentShaderCode) {
-    this.scores.forEach(s => s.render(vertexShaderCode, fragmentShaderCode));
+  async render(vertexShaderCode, fragmentShaderCode) {
+    for(let i = 0; i < this.scores.length; i++) {
+      await this.scores[i].render(vertexShaderCode, fragmentShaderCode)
+    }
   }
 
 
   update() {
     const counterSplit = ScoreSystem.#counter.toString().split('');
     for(let i = 0; i < counterSplit.length; i++) {
-      this.scores[i].mesh.transform.translate.x = this.center.x + ((Score.getDimensions().width * i));
+      this.scores[i].mesh.transform.translate.x = this.center.x + (Score.getDimensions().width * i);
       this.scores[i].mesh.textureCoordinates = ScoreSystem.#numberTexCoord[counterSplit[i]];
       this.scores[i].update();
     }

@@ -35,9 +35,9 @@ class Obstacle {
    * @param { String } vertexShaderCode 
    * @param { String } fragmentShaderCode 
    */
-  render(vertexShaderCode, fragmentShaderCode) {
-    this.pipeBottom.render(vertexShaderCode, fragmentShaderCode);
-    this.pipeTop.render(vertexShaderCode, fragmentShaderCode);
+  async render(vertexShaderCode, fragmentShaderCode) {
+    await this.pipeBottom.render(vertexShaderCode, fragmentShaderCode);
+    await this.pipeTop.render(vertexShaderCode, fragmentShaderCode);
   }
 
 

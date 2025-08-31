@@ -7,7 +7,7 @@ let game = null;
 let idReqAnim = -1;
 try {
   game = new Game(canvas);
-  game.render();
+  await game.render();
   window.requestAnimationFrame(loop);
   window.removeEventListener('beforeunload', destroy);
 } catch(e) {
