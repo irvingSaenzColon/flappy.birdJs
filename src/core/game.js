@@ -1,12 +1,13 @@
 import WebGL from "./webGL.js";
+import CONFIG from "../config.js";
 import Ground from "../objects/ground.js";
 import Obstacle from "../objects/obstalce.js";
 import Player from "../objects/player.js";
 import Pipe from "../objects/pipe.js";
 import Input from "./input.js";
 import SoundController from "./sound.js";
-import CONFIG from "../config.js";
 import Background from "../objects/background.js";
+import ScoreSystem from "../UI/scoreSystem.js";
 
 
 const vertexShaderCode = `#version 300 es
@@ -70,6 +71,7 @@ class Game {
       let startPosition = canvasDimensions.width + (Obstacle.restartXLimitter * i);
       return new Obstacle(startPosition , canvasDimensions)
     });
+    this.scoreSystem = new ScoreSystem();
     // Sound setup
     this.soundType = {
       "JUMP": 1,
@@ -94,7 +96,6 @@ class Game {
       }
     }
     Input.setup(this.keyBindings);
-    this.score = 0;
     this.stop = false;
     this.pause = false;
   }
@@ -105,6 +106,7 @@ class Game {
     this.obstacles.forEach(o => o.render(vertexShaderCode, fragmentShaderSourceCode));
     this.background.render(vertexShaderCode, fragmentShaderSourceCode);
     this.ground.render(vertexShaderCode, fragmentShaderSourceCode);;
+    this.scoreSystem.render(vertexShaderCode, fragmentShaderSourceCode);
   }
 
 
@@ -144,12 +146,12 @@ class Game {
         this.player.hitted = true;
         SoundController.play(this.soundType.HIT);
       } else if(!o.gapHitted && o.gapCollider.isColliding(this.player.collider)) {
-        this.score++;
         o.gapHitted = true;
+        ScoreSystem.increaseCounter();
         SoundController.play(this.soundType.SCORE);
-        console.log('Score is: ', this.score);
       }
     });
+    this.scoreSystem.update();
   }
 
 
@@ -159,8 +161,8 @@ class Game {
       o.xStart = this.canvas.clientWidth + (Obstacle.restartXLimitter * i);
       o.restart() ;
     });
-    Obstacle.speed = 2.5;
-    this.score = 0;
+    Obstacle.speed = 150;
+    ScoreSystem.reseyCounter();
     this.stop = false;
   }
 
