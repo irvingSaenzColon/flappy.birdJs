@@ -1,12 +1,11 @@
 /** @import * as typedef from '../core/typedef.js' */
-import Timer from "../core/Timer.js";
 import BoxCollider from "../collision/boxCollider.js";
 import Pipe from "./pipe.js";
 import CONFIG from "../config.js";
 
 
 class Obstacle {
-  static speed = 150;
+  static speed = 2.5;
   static yOffset = 200;
   static yLimitPos = {min: -200, max: 80};
   static restartXLimitter = 0;
@@ -46,9 +45,9 @@ class Obstacle {
       this.xStart = this.canvasDimensions.width;
       this.restart();
     } else {
-      this.pipeBottom.mesh.transform.translate.x -= (Obstacle.speed * Timer.getDelta());
-      this.pipeTop.mesh.transform.translate.x -= (Obstacle.speed * Timer.getDelta());
-      this.gapPosition.x -= (Obstacle.speed * Timer.getDelta());
+      this.pipeBottom.mesh.transform.translate.x -= Obstacle.speed;
+      this.pipeTop.mesh.transform.translate.x -= Obstacle.speed;
+      this.gapPosition.x -= Obstacle.speed;
     }
     this.pipeBottom.update();
     this.pipeTop.update();

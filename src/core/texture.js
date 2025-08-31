@@ -29,6 +29,7 @@ class Texture {
 
 
   /**
+   * 
    * @param { Number } unit 
    * @param { WebGLUniformLocation } samplerLocation 
    */

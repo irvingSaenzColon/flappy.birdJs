@@ -1,6 +1,5 @@
 /** @import * as typedef from '../core/typedef.js' */
 import Matrix from "./matrix.js";
-import Timer from "./Timer.js";
 
 
 class Mesh {
@@ -23,7 +22,7 @@ class Mesh {
    * @param { typedef.Vec2 } velocity 
    */
   applyVelocity(velocity) {
-    this.transform.translate.y += (velocity.y * Timer.getDelta());
+    this.transform.translate.y += velocity.y;
   }
 
 
