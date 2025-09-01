@@ -132,7 +132,7 @@ class ScoreSystem {
    */
   async render(vertexShaderCode, fragmentShaderCode) {
     for(let i = 0; i < this.scores.length; i++) {
-      await this.scores[i].render(vertexShaderCode, fragmentShaderCode)
+      this.scores[i].render(vertexShaderCode, fragmentShaderCode)
     }
   }
 

@@ -18,5 +18,6 @@ body {
   max-width: 512px;
   width: 100%;
   height: 100vh;
+  max-height: 696px;
   background-color: #e30f4f;
 }
