@@ -10,7 +10,9 @@ let idReqAnim = -1;
 async function main() {
   try {
     game = new Game(canvas);
-    await game.render();
+    game.onInit();
+    await game.onLoadResources();
+    game.setup();
     window.requestAnimationFrame(loop);
     window.removeEventListener('beforeunload', destroy);
   } catch(e) {

@@ -31,6 +31,12 @@ class Obstacle {
   }
 
 
+  async onLoadResources() {
+    await this.pipeTop.onLoadResources();
+    await this.pipeBottom.onLoadResources();
+  }
+
+
   /**
    * @param { String } vertexShaderCode 
    * @param { String } fragmentShaderCode 

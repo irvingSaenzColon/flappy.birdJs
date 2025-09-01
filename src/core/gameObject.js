@@ -25,7 +25,7 @@ class GameObject {
     if(shouldCollide) {
       this.collider = new Collider();
     }
-    this.texture = new Texture(textureName, this.textureCoordinates);
+    this.texture = new Texture(textureName);
     this.shader = new ShaderHandler(shaderParams, this.texture);
   }
 
@@ -46,8 +46,14 @@ class GameObject {
   }
 
 
-  async render(vertexShaderCode, fragmentShaderCode) {
-    await this.shader.render(vertexShaderCode, fragmentShaderCode, this.mesh.vertex, this.mesh.textureCoordinates);
+  render(vertexShaderCode, fragmentShaderCode) {
+    this.shader.render(vertexShaderCode, fragmentShaderCode, this.mesh.vertex, this.mesh.textureCoordinates);
+  }
+
+
+  async onLoadResources() {
+    await this.texture.loadTexture();
+    this.shader.texture.image = this.texture.image;
   }
 
 

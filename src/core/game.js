@@ -58,20 +58,8 @@ class Game {
     this.canvas = canvas;
     Game.CANVAS_DIMENSIONS.width = canvas.clientWidth;
     Game.CANVAS_DIMENSIONS.height = canvas.clientHeight;
-    const canvasDimensions = {
-      width: canvas.clientWidth, 
-      height: canvas.clientHeight
-    };
     WebGL.initialize(canvas);
-    this.background = new Background(canvasDimensions, `${CONFIG.TEXTURES_PATH}background/background.day.png`);
-    this.ground = new Ground(canvasDimensions, `${CONFIG.TEXTURES_PATH}background/ground.png`);
-    this.player = new Player(canvasDimensions, `${CONFIG.TEXTURES_PATH}bird/default/bird.midflap.png`);
-    Obstacle.restartXLimitter = (canvasDimensions.width / Game.MAX_OBSTACLES) + Pipe.DEFAULT_WIDTH;
-    this.obstacles = Array.from({ length: Game.MAX_OBSTACLES }, (_, i) => {
-      let startPosition = canvasDimensions.width + (Obstacle.restartXLimitter * i);
-      return new Obstacle(startPosition , canvasDimensions)
-    });
-    this.scoreSystem = new ScoreSystem();
+    
     // Sound setup
     this.soundType = {
       "JUMP": 1,
@@ -88,6 +76,9 @@ class Game {
         if(this.pause || this.player.hitted) {
           return;
         }
+        if(this.start) {
+          this.start = false;
+        }
         SoundController.play(this.soundType.JUMP);
         this.player.jump();
       },
@@ -98,16 +89,41 @@ class Game {
     Input.setup(this.keyBindings);
     this.stop = false;
     this.pause = false;
+    this.start = true;
   }
 
 
-  async render() {
-    await this.player.render(vertexShaderCode, fragmentShaderSourceCode);
-    await this.background.render(vertexShaderCode, fragmentShaderSourceCode);
-    await this.ground.render(vertexShaderCode, fragmentShaderSourceCode);;
-    await this.scoreSystem.render(vertexShaderCode, fragmentShaderSourceCode);
+  onInit() {
+    this.background = new Background(Game.CANVAS_DIMENSIONS, `${CONFIG.TEXTURES_PATH}background/background.day.png`);
+    this.ground = new Ground(Game.CANVAS_DIMENSIONS, `${CONFIG.TEXTURES_PATH}background/ground.png`);
+    this.player = new Player(Game.CANVAS_DIMENSIONS, `${CONFIG.TEXTURES_PATH}bird/default/bird.midflap.png`);
+    Obstacle.restartXLimitter = (Game.CANVAS_DIMENSIONS.width / Game.MAX_OBSTACLES) + Pipe.DEFAULT_WIDTH;
+    this.obstacles = Array.from({ length: Game.MAX_OBSTACLES }, (_, i) => {
+      let startPosition = Game.CANVAS_DIMENSIONS.width + (Obstacle.restartXLimitter * i);
+      return new Obstacle(startPosition , Game.CANVAS_DIMENSIONS)
+    });
+    this.scoreSystem = new ScoreSystem();
+  }
+
+
+  async onLoadResources() {
+    await this.background.onLoadResources();
+    await this.ground.onLoadResources();
+    await this.player.onLoadResources();
+    await this.scoreSystem.onLoadResources();
     for(let i = 0; i < this.obstacles.length; i++) {
-      await this.obstacles[i].render(vertexShaderCode, fragmentShaderSourceCode);
+      await this.obstacles[i].onLoadResources()
+    }
+  }
+
+
+  async setup() {
+    this.background.render(vertexShaderCode, fragmentShaderSourceCode);
+    this.ground.render(vertexShaderCode, fragmentShaderSourceCode);
+    this.player.render(vertexShaderCode, fragmentShaderSourceCode);
+    this.scoreSystem.render(vertexShaderCode, fragmentShaderSourceCode);
+    for(let i = 0; i < this.obstacles.length; i++) {
+      this.obstacles[i].render(vertexShaderCode, fragmentShaderSourceCode);
     }
   }
 
@@ -116,7 +132,7 @@ class Game {
    * @param {number} dt - Delta time, time elapsed since the game is launched
    */
   update(dt) {
-    if(this.stop) {
+    if(this.stop || this.start) {
       return;
     }
     this.canvas.width = this.canvas.clientWidth;
@@ -131,6 +147,7 @@ class Game {
     this.obstacles.forEach(o => o.update());
     this.ground.update();
     this.player.update();
+    //Collision detection
     if(this.ground.collider.isColliding(this.player.collider)) {
       this.player.gravity = 0;
       this.player.velocity.y = 0;

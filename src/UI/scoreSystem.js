@@ -1,5 +1,6 @@
 import CONFIG from "../config.js";
 import Game from "../core/game.js";
+import ResourceLoader from "../core/resourceLoader.js";
 import Score from "../objects/score.js";
 
 
@@ -112,6 +113,15 @@ class ScoreSystem {
     this.scores.forEach(s => {
       s.mesh.transform.translate = { x: this.center.x, y: this.center.y };
       s.mesh.textureCoordinates = ScoreSystem.#numberTexCoord[0]
+    });
+  }
+
+
+  async onLoadResources() {
+    const imgLoaded = await ResourceLoader.getResource(`${CONFIG.TEXTURES_PATH}/numbers/numbers.png`)
+    this.scores.forEach(s => {
+      s.texture.image = imgLoaded
+      s.shader.texture.image = imgLoaded;
     });
   }
 
