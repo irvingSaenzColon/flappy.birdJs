@@ -88,7 +88,7 @@ class ShaderHandler {
    * @param { Float32Array } vertexPosition
    * @param { Float32Array } texCoord
    */
-  async render(vertexShaderCode, fragmentShaderCode, vertexPosition, texCoord) {
+  render(vertexShaderCode, fragmentShaderCode, vertexPosition, texCoord) {
     this.#setup(vertexShaderCode, fragmentShaderCode);
     //Setup geometry
     this.#setupGeometryBuffer(vertexPosition);

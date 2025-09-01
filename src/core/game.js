@@ -58,10 +58,6 @@ class Game {
     this.canvas = canvas;
     Game.CANVAS_DIMENSIONS.width = canvas.clientWidth;
     Game.CANVAS_DIMENSIONS.height = canvas.clientHeight;
-    const canvasDimensions = {
-      width: canvas.clientWidth, 
-      height: canvas.clientHeight
-    };
     WebGL.initialize(canvas);
     
     // Sound setup
@@ -80,6 +76,9 @@ class Game {
         if(this.pause || this.player.hitted) {
           return;
         }
+        if(this.start) {
+          this.start = false;
+        }
         SoundController.play(this.soundType.JUMP);
         this.player.jump();
       },
@@ -90,6 +89,7 @@ class Game {
     Input.setup(this.keyBindings);
     this.stop = false;
     this.pause = false;
+    this.start = true;
   }
 
 
@@ -106,13 +106,24 @@ class Game {
   }
 
 
-  async setup() {
-    await this.player.render(vertexShaderCode, fragmentShaderSourceCode);
-    await this.background.render(vertexShaderCode, fragmentShaderSourceCode);
-    await this.ground.render(vertexShaderCode, fragmentShaderSourceCode);;
-    await this.scoreSystem.render(vertexShaderCode, fragmentShaderSourceCode);
+  async onLoadResources() {
+    await this.background.onLoadResources();
+    await this.ground.onLoadResources();
+    await this.player.onLoadResources();
+    await this.scoreSystem.onLoadResources();
     for(let i = 0; i < this.obstacles.length; i++) {
-      await this.obstacles[i].render(vertexShaderCode, fragmentShaderSourceCode);
+      await this.obstacles[i].onLoadResources()
+    }
+  }
+
+
+  async setup() {
+    this.background.render(vertexShaderCode, fragmentShaderSourceCode);
+    this.ground.render(vertexShaderCode, fragmentShaderSourceCode);
+    this.player.render(vertexShaderCode, fragmentShaderSourceCode);
+    this.scoreSystem.render(vertexShaderCode, fragmentShaderSourceCode);
+    for(let i = 0; i < this.obstacles.length; i++) {
+      this.obstacles[i].render(vertexShaderCode, fragmentShaderSourceCode);
     }
   }
 
@@ -121,7 +132,7 @@ class Game {
    * @param {number} dt - Delta time, time elapsed since the game is launched
    */
   update(dt) {
-    if(this.stop) {
+    if(this.stop || this.start) {
       return;
     }
     this.canvas.width = this.canvas.clientWidth;
@@ -136,6 +147,7 @@ class Game {
     this.obstacles.forEach(o => o.update());
     this.ground.update();
     this.player.update();
+    //Collision detection
     if(this.ground.collider.isColliding(this.player.collider)) {
       this.player.gravity = 0;
       this.player.velocity.y = 0;

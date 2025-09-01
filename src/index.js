@@ -11,7 +11,8 @@ async function main() {
   try {
     game = new Game(canvas);
     game.onInit();
-    await game.setup();
+    await game.onLoadResources();
+    game.setup();
     window.requestAnimationFrame(loop);
     window.removeEventListener('beforeunload', destroy);
   } catch(e) {
