@@ -63,15 +63,7 @@ class Game {
       height: canvas.clientHeight
     };
     WebGL.initialize(canvas);
-    this.background = new Background(canvasDimensions, `${CONFIG.TEXTURES_PATH}background/background.day.png`);
-    this.ground = new Ground(canvasDimensions, `${CONFIG.TEXTURES_PATH}background/ground.png`);
-    this.player = new Player(canvasDimensions, `${CONFIG.TEXTURES_PATH}bird/default/bird.midflap.png`);
-    Obstacle.restartXLimitter = (canvasDimensions.width / Game.MAX_OBSTACLES) + Pipe.DEFAULT_WIDTH;
-    this.obstacles = Array.from({ length: Game.MAX_OBSTACLES }, (_, i) => {
-      let startPosition = canvasDimensions.width + (Obstacle.restartXLimitter * i);
-      return new Obstacle(startPosition , canvasDimensions)
-    });
-    this.scoreSystem = new ScoreSystem();
+    
     // Sound setup
     this.soundType = {
       "JUMP": 1,
@@ -101,7 +93,20 @@ class Game {
   }
 
 
-  async render() {
+  onInit() {
+    this.background = new Background(Game.CANVAS_DIMENSIONS, `${CONFIG.TEXTURES_PATH}background/background.day.png`);
+    this.ground = new Ground(Game.CANVAS_DIMENSIONS, `${CONFIG.TEXTURES_PATH}background/ground.png`);
+    this.player = new Player(Game.CANVAS_DIMENSIONS, `${CONFIG.TEXTURES_PATH}bird/default/bird.midflap.png`);
+    Obstacle.restartXLimitter = (Game.CANVAS_DIMENSIONS.width / Game.MAX_OBSTACLES) + Pipe.DEFAULT_WIDTH;
+    this.obstacles = Array.from({ length: Game.MAX_OBSTACLES }, (_, i) => {
+      let startPosition = Game.CANVAS_DIMENSIONS.width + (Obstacle.restartXLimitter * i);
+      return new Obstacle(startPosition , Game.CANVAS_DIMENSIONS)
+    });
+    this.scoreSystem = new ScoreSystem();
+  }
+
+
+  async setup() {
     await this.player.render(vertexShaderCode, fragmentShaderSourceCode);
     await this.background.render(vertexShaderCode, fragmentShaderSourceCode);
     await this.ground.render(vertexShaderCode, fragmentShaderSourceCode);;
