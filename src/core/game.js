@@ -89,7 +89,7 @@ class Game {
     }
     Input.setup(this.keyBindings);
     this.stop = false;
-    this.pause = false;
+    this.pause = true;
     this.start = true;
   }
 

@@ -24,6 +24,7 @@ async function main() {
 
 function loop(currTime) {
   Timer.setPrevTime(currTime)
+  game.pause = false;
   game.update();
   window.requestAnimationFrame(loop);
 }
