@@ -19,10 +19,10 @@ class GameObject {
   constructor(textureName, shaderParams, gravity = 0.98, canvasDimensions, shouldCollide) {
     this.mesh = new Mesh();
     this.gravity = gravity;
-    this.velocity = {x: 0, y: 0};
+    this.velocity = { x: 0, y: 0 };
     this.canvasDimensions = canvasDimensions;
     this.collider = null;
-    if(shouldCollide) {
+    if (shouldCollide) {
       this.collider = new Collider();
     }
     this.texture = new Texture(textureName);
@@ -31,14 +31,14 @@ class GameObject {
 
 
   update() {
-    if(this.gravity) {
+    if (this.gravity) {
       this.velocity.y -= (this.gravity * Timer.getDelta());
-      if(this.mesh.transform.rotation < 450) {
+      if (this.mesh.transform.rotation < 450) {
         this.mesh.transform.rotation += (150 * Timer.getDelta());
       }
       this.mesh.applyVelocity(this.velocity);
     }
-    if(this.collider) {
+    if (this.collider) {
       this.collider.update(this.mesh.transform.translate);
     }
     this.mesh.calculateTransform();
@@ -46,14 +46,24 @@ class GameObject {
   }
 
 
+  /*
+   * @param { String } vertexShaderCode
+   * @param { String } fragmentShaderCode
+   * */
   render(vertexShaderCode, fragmentShaderCode) {
     this.shader.render(vertexShaderCode, fragmentShaderCode, this.mesh.vertex, this.mesh.textureCoordinates);
   }
 
 
-  async onLoadResources() {
-    await this.texture.loadTexture();
-    this.shader.texture.image = this.texture.image;
+  /*
+   * @param { HTMLImageElement } img
+   * */
+  onLoadResources(img) {
+    if (!img) {
+      throw new Error('Error: Image must be defined');
+    }
+    this.texture.image = img;
+    this.shader.texture.image = img;
   }
 
 

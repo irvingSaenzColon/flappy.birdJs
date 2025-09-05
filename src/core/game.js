@@ -8,6 +8,7 @@ import Input from "./input.js";
 import SoundController from "./sound.js";
 import Background from "../objects/background.js";
 import ScoreSystem from "../UI/scoreSystem.js";
+import ResourceLoader from "./resourceLoader.js";
 
 
 const vertexShaderCode = `#version 300 es
@@ -52,14 +53,14 @@ class Game {
    * @param {HTMLCanvasElement} canvas
    */
   constructor(canvas) {
-    if(!canvas || !canvas instanceof HTMLCanvasElement) {
+    if (!canvas || !canvas instanceof HTMLCanvasElement) {
       throw new Error('A canvas mus be provided');
     }
     this.canvas = canvas;
     Game.CANVAS_DIMENSIONS.width = canvas.clientWidth;
     Game.CANVAS_DIMENSIONS.height = canvas.clientHeight;
     WebGL.initialize(canvas);
-    
+
     // Sound setup
     this.soundType = {
       "JUMP": 1,
@@ -73,10 +74,10 @@ class Game {
     //Key bing setup
     this.keyBindings = {
       "Space": () => {
-        if(this.pause || this.player.hitted) {
+        if (this.pause || this.player.hitted) {
           return;
         }
-        if(this.start) {
+        if (this.start) {
           this.start = false;
         }
         SoundController.play(this.soundType.JUMP);
@@ -100,19 +101,28 @@ class Game {
     Obstacle.restartXLimitter = (Game.CANVAS_DIMENSIONS.width / Game.MAX_OBSTACLES) + Pipe.DEFAULT_WIDTH;
     this.obstacles = Array.from({ length: Game.MAX_OBSTACLES }, (_, i) => {
       let startPosition = Game.CANVAS_DIMENSIONS.width + (Obstacle.restartXLimitter * i);
-      return new Obstacle(startPosition , Game.CANVAS_DIMENSIONS)
+      return new Obstacle(startPosition, Game.CANVAS_DIMENSIONS)
     });
     this.scoreSystem = new ScoreSystem();
   }
 
 
   async onLoadResources() {
-    await this.background.onLoadResources();
-    await this.ground.onLoadResources();
-    await this.player.onLoadResources();
-    await this.scoreSystem.onLoadResources();
-    for(let i = 0; i < this.obstacles.length; i++) {
-      await this.obstacles[i].onLoadResources()
+    const resourcesToLoad = [
+      `${CONFIG.TEXTURES_PATH}background/background.day.png`,
+      `${CONFIG.TEXTURES_PATH}background/ground.png`,
+      `${CONFIG.TEXTURES_PATH}bird/default/bird.midflap.png`,
+      `${CONFIG.TEXTURES_PATH}/numbers/numbers.png`,
+      `${CONFIG.TEXTURES_PATH}pipe/pipe.green.png`,
+    ];
+    const resourcesImg = await ResourceLoader.getAllResources(resourcesToLoad);
+    console.log(resourcesImg);
+    this.background.onLoadResources(resourcesImg[0]);
+    this.ground.onLoadResources(resourcesImg[1]);
+    this.player.onLoadResources(resourcesImg[2]);
+    this.scoreSystem.onLoadResources(resourcesImg[3]);
+    for (let i = 0; i < this.obstacles.length; i++) {
+      this.obstacles[i].onLoadResources(resourcesImg[4]);
     }
   }
 
@@ -122,7 +132,7 @@ class Game {
     this.ground.render(vertexShaderCode, fragmentShaderSourceCode);
     this.player.render(vertexShaderCode, fragmentShaderSourceCode);
     this.scoreSystem.render(vertexShaderCode, fragmentShaderSourceCode);
-    for(let i = 0; i < this.obstacles.length; i++) {
+    for (let i = 0; i < this.obstacles.length; i++) {
       this.obstacles[i].render(vertexShaderCode, fragmentShaderSourceCode);
     }
   }
@@ -132,7 +142,7 @@ class Game {
    * @param {number} dt - Delta time, time elapsed since the game is launched
    */
   update(dt) {
-    if(this.stop || this.start) {
+    if (this.stop || this.start) {
       return;
     }
     this.canvas.width = this.canvas.clientWidth;
@@ -148,11 +158,11 @@ class Game {
     this.ground.update();
     this.player.update();
     //Collision detection
-    if(this.ground.collider.isColliding(this.player.collider)) {
+    if (this.ground.collider.isColliding(this.player.collider)) {
       this.player.gravity = 0;
       this.player.velocity.y = 0;
       this.stop = true;
-      if(!this.player.hitted) {
+      if (!this.player.hitted) {
         this.player.hitted = true;
         SoundController.play(this.soundType.HIT);
       }
@@ -160,11 +170,11 @@ class Game {
     this.obstacles.forEach(o => {
       const isCollidingTop = o.pipeTop.collider.isColliding(this.player.collider);
       const isCollidingBottom = o.pipeBottom.collider.isColliding(this.player.collider)
-      if(!this.player.hitted && (isCollidingTop == true || isCollidingBottom == true)) {
+      if (!this.player.hitted && (isCollidingTop == true || isCollidingBottom == true)) {
         Obstacle.speed = 0;
         this.player.hitted = true;
         SoundController.play(this.soundType.HIT);
-      } else if(!o.gapHitted && o.gapCollider.isColliding(this.player.collider)) {
+      } else if (!o.gapHitted && o.gapCollider.isColliding(this.player.collider)) {
         o.gapHitted = true;
         ScoreSystem.increaseCounter();
         SoundController.play(this.soundType.SCORE);
@@ -178,7 +188,7 @@ class Game {
     this.player.restart();
     this.obstacles.forEach((o, i) => {
       o.xStart = this.canvas.clientWidth + (Obstacle.restartXLimitter * i);
-      o.restart() ;
+      o.restart();
     });
     Obstacle.speed = 150;
     ScoreSystem.reseyCounter();

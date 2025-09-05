@@ -1,3 +1,4 @@
+import ResourceLoader from './core/resourceLoader.js';
 import Game from "./core/game.js";
 import Timer from "./core/Timer.js";
 
@@ -15,7 +16,7 @@ async function main() {
     game.setup();
     window.requestAnimationFrame(loop);
     window.removeEventListener('beforeunload', destroy);
-  } catch(e) {
+  } catch (e) {
     console.error(e);
   }
 }
@@ -29,10 +30,10 @@ function loop(currTime) {
 
 
 function destroy(e) {
-  if(idReqAnim != -1) {
+  if (idReqAnim != -1) {
     window.cancelAnimationFrame(idReqAnim);
   }
-  if(game && game instanceof Game) {
+  if (game && game instanceof Game) {
     game.destroy();
   }
 }

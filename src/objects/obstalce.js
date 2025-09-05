@@ -8,7 +8,7 @@ import CONFIG from "../config.js";
 class Obstacle {
   static speed = 150;
   static yOffset = 200;
-  static yLimitPos = {min: -200, max: 80};
+  static yLimitPos = { min: -200, max: 80 };
   static restartXLimitter = 0;
 
 
@@ -31,9 +31,12 @@ class Obstacle {
   }
 
 
-  async onLoadResources() {
-    await this.pipeTop.onLoadResources();
-    await this.pipeBottom.onLoadResources();
+  /*
+   * @param { HTMLImageElement } img
+   * */
+  onLoadResources(img) {
+    this.pipeTop.onLoadResources(img);
+    this.pipeBottom.onLoadResources(img);
   }
 
 
@@ -48,7 +51,7 @@ class Obstacle {
 
 
   update() {
-    if(this.pipeBottom.mesh.transform.translate.x < -((Pipe.DEFAULT_WIDTH / 2) + Obstacle.restartXLimitter)) {
+    if (this.pipeBottom.mesh.transform.translate.x < -((Pipe.DEFAULT_WIDTH / 2) + Obstacle.restartXLimitter)) {
       this.xStart = this.canvasDimensions.width;
       this.restart();
     } else {
@@ -63,7 +66,7 @@ class Obstacle {
 
 
   restart() {
-    const {bottomPos, topPos, gapPos} = this.generatePosition();
+    const { bottomPos, topPos, gapPos } = this.generatePosition();
     this.pipeBottom.mesh.setPosition(bottomPos);
     this.pipeTop.mesh.setPosition(topPos);
     this.gapPosition = gapPos;
@@ -73,12 +76,12 @@ class Obstacle {
 
   generatePosition() {
     const yPossBott = Math.floor(Math.random() * (Obstacle.yLimitPos.max - Obstacle.yLimitPos.min + 1) + Obstacle.yLimitPos.min);
-    const xStartPos = ( this.xStart );
+    const xStartPos = (this.xStart);
     return {
-      bottomPos: {x: xStartPos, y: yPossBott},
-      topPos: {x: xStartPos, y: (yPossBott + Obstacle.yOffset + Pipe.DEFAULT_HEIGHT) },
-      gapPos: {x: (xStartPos + (Pipe.DEFAULT_WIDTH / 2)), y: (yPossBott + Pipe.DEFAULT_HEIGHT )}
-    } 
+      bottomPos: { x: xStartPos, y: yPossBott },
+      topPos: { x: xStartPos, y: (yPossBott + Obstacle.yOffset + Pipe.DEFAULT_HEIGHT) },
+      gapPos: { x: (xStartPos + (Pipe.DEFAULT_WIDTH / 2)), y: (yPossBott + Pipe.DEFAULT_HEIGHT) }
+    }
   }
 
 

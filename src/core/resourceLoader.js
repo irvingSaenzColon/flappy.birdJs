@@ -1,7 +1,17 @@
 class ResourceLoader {
 
 
-  constructor() {}
+  constructor() { }
+
+
+  /*
+   * @param { Array<String> } resources
+   * return { Promise<<Array<HTMLImageElement>> }
+   * */
+  static getAllResources(resources) {
+    const promises = resources.map((r) => this.getResource(r));
+    return Promise.all(promises);
+  }
 
 
   /**

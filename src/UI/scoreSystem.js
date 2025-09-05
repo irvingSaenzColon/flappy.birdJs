@@ -16,7 +16,7 @@ class ScoreSystem {
       0.00, 0.0,
       0.00, 0.0,
       0.098, 0.99,
-      0.098, 0.0,        
+      0.098, 0.0,
     ]),
     "1": new Float32Array([
       0.105, 0.99,
@@ -97,8 +97,8 @@ class ScoreSystem {
   constructor() {
     const numbersTexture = `${CONFIG.TEXTURES_PATH}/numbers/numbers.png`;
     const transform = {
-      translate: {x: 0, y: 0},
-      scale: {x: 1, y: 1},
+      translate: { x: 0, y: 0 },
+      scale: { x: 1, y: 1 },
       rotation: 0,
     }
     this.scores = [
@@ -117,11 +117,16 @@ class ScoreSystem {
   }
 
 
-  async onLoadResources() {
-    const imgLoaded = await ResourceLoader.getResource(`${CONFIG.TEXTURES_PATH}/numbers/numbers.png`)
+  /*
+   * @param { HTMLImageElement } img
+   * */
+  async onLoadResources(img) {
+    if (!img) {
+      throw new Error('Error: Image must be provided for scoreSystem');
+    }
     this.scores.forEach(s => {
-      s.texture.image = imgLoaded
-      s.shader.texture.image = imgLoaded;
+      s.texture.image = img
+      s.shader.texture.image = img;
     });
   }
 
@@ -131,7 +136,7 @@ class ScoreSystem {
    * @param { String } fragmentShaderCode 
    */
   async render(vertexShaderCode, fragmentShaderCode) {
-    for(let i = 0; i < this.scores.length; i++) {
+    for (let i = 0; i < this.scores.length; i++) {
       this.scores[i].render(vertexShaderCode, fragmentShaderCode)
     }
   }
@@ -139,7 +144,7 @@ class ScoreSystem {
 
   update() {
     const counterSplit = ScoreSystem.#counter.toString().split('');
-    for(let i = 0; i < counterSplit.length; i++) {
+    for (let i = 0; i < counterSplit.length; i++) {
       this.scores[i].mesh.transform.translate.x = this.center.x + (Score.getDimensions().width * i);
       this.scores[i].mesh.textureCoordinates = ScoreSystem.#numberTexCoord[counterSplit[i]];
       this.scores[i].update();
