@@ -60,34 +60,12 @@ class Game {
     Game.CANVAS_DIMENSIONS.width = canvas.clientWidth;
     Game.CANVAS_DIMENSIONS.height = canvas.clientHeight;
     WebGL.initialize(canvas);
-
-    // Sound setup
+    //Define sound types
     this.soundType = {
       "JUMP": 1,
       "HIT": 2,
       "SCORE": 3
     }
-    SoundController.SOUND_FOLDER = './src/assets/sounds/';
-    SoundController.createAudio(this.soundType.JUMP, "wing.wav");
-    SoundController.createAudio(this.soundType.HIT, "hit.wav");
-    SoundController.createAudio(this.soundType.SCORE, "point.wav");
-    //Key bing setup
-    this.keyBindings = {
-      "Space": () => {
-        if (this.pause || this.player.hitted) {
-          return;
-        }
-        if (this.start) {
-          this.start = false;
-        }
-        SoundController.play(this.soundType.JUMP);
-        this.player.jump();
-      },
-      "KeyR": () => {
-        this.restart();
-      }
-    }
-    Input.setup(this.keyBindings);
     this.stop = false;
     this.pause = true;
     this.start = true;
@@ -135,6 +113,28 @@ class Game {
     for (let i = 0; i < this.obstacles.length; i++) {
       this.obstacles[i].render(vertexShaderCode, fragmentShaderSourceCode);
     }
+    //Setup sound effects
+    SoundController.SOUND_FOLDER = './src/assets/sounds/';
+    SoundController.createAudio(this.soundType.JUMP, "wing.wav");
+    SoundController.createAudio(this.soundType.HIT, "hit.wav");
+    SoundController.createAudio(this.soundType.SCORE, "point.wav");
+    //Key bing setup
+    this.keyBindings = {
+      "Space": () => {
+        if (this.pause || this.player.hitted) {
+          return;
+        }
+        if (this.start) {
+          this.start = false;
+        }
+        SoundController.play(this.soundType.JUMP);
+        this.player.jump();
+      },
+      "KeyR": () => {
+        this.restart();
+      }
+    }
+    Input.setup(this.keyBindings);
   }
 
 
