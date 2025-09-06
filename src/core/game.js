@@ -94,7 +94,6 @@ class Game {
       `${CONFIG.TEXTURES_PATH}pipe/pipe.green.png`,
     ];
     const resourcesImg = await ResourceLoader.getAllResources(resourcesToLoad);
-    console.log(resourcesImg);
     this.background.onLoadResources(resourcesImg[0]);
     this.ground.onLoadResources(resourcesImg[1]);
     this.player.onLoadResources(resourcesImg[2]);
