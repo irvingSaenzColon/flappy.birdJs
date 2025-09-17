@@ -46,7 +46,19 @@ class Game {
   static CANVAS_DIMENSIONS = {
     width: 0,
     height: 0,
+  }; static STATES = {
+    "NONE": 0,
+    "LOAD": 1,
+    "START" : 2,
+    "READY": 3,
+    "PLAY": 4,
+    "PAUSE": 5,
+    "DONE": 6,
+    "STOP": 7,
   };
+  #state = Game.STATES.NONE;
+  //TODO refactor of game states, instead of using this.ready, this.pause, this.start i should have a unique variable that tells which state is the current game
+  //TODO Create a class that renders a scene, and doing everything inside scene instead of doing it all in game
 
 
   /**
@@ -66,9 +78,7 @@ class Game {
       "HIT": 2,
       "SCORE": 3
     }
-    this.stop = false;
-    this.pause = true;
-    this.start = true;
+    this.#state = Game.STATES.NONE;
   }
 
 
@@ -86,6 +96,7 @@ class Game {
 
 
   async onLoadResources() {
+    this.#state = Game.STATES.LOAD;
     const resourcesToLoad = [
       `${CONFIG.TEXTURES_PATH}background/background.day.png`,
       `${CONFIG.TEXTURES_PATH}background/ground.png`,
@@ -120,12 +131,10 @@ class Game {
     //Key bing setup
     this.keyBindings = {
       "Space": () => {
-        if (this.pause || this.player.hitted) {
+        if(this.#state === Game.STATES.PAUSE || this.#state === Game.STATES.DONE || this.#state === Game.STATES.STOP) {
           return;
         }
-        if (this.start) {
-          this.start = false;
-        }
+        this.#state = Game.STATES.PLAY;
         SoundController.play(this.soundType.JUMP);
         this.player.jump();
       },
@@ -133,6 +142,7 @@ class Game {
         this.restart();
       }
     }
+    this.#state = Game.STATES.READY;
     Input.setup(this.keyBindings);
   }
 
@@ -141,7 +151,7 @@ class Game {
    * @param {number} dt - Delta time, time elapsed since the game is launched
    */
   update(dt) {
-    if (this.stop || this.start) {
+    if(this.#state !== Game.STATES.PLAY && this.#state !== Game.STATES.STOP) {
       return;
     }
     this.canvas.width = this.canvas.clientWidth;
@@ -160,7 +170,7 @@ class Game {
     if (this.ground.collider.isColliding(this.player.collider)) {
       this.player.gravity = 0;
       this.player.velocity.y = 0;
-      this.stop = true;
+      this.#state = Game.STATES.DONE;
       if (!this.player.hitted) {
         this.player.hitted = true;
         SoundController.play(this.soundType.HIT);
@@ -171,6 +181,7 @@ class Game {
       const isCollidingBottom = o.pipeBottom.collider.isColliding(this.player.collider)
       if (!this.player.hitted && (isCollidingTop == true || isCollidingBottom == true)) {
         Obstacle.speed = 0;
+        this.#state = Game.STATES.STOP;
         this.player.hitted = true;
         SoundController.play(this.soundType.HIT);
       } else if (!o.gapHitted && o.gapCollider.isColliding(this.player.collider)) {
@@ -183,6 +194,19 @@ class Game {
   }
 
 
+  setState(newState) {
+    if(!newState || (newState && !Game.STATES[newState])) {
+      throw new Error("Error: current state doesn't exists, use a defined one");
+    }
+    this.#state = Game.STATES[newState];
+  }
+
+
+  getState() {
+    return this.#state;
+  }
+
+
   restart() {
     this.player.restart();
     this.obstacles.forEach((o, i) => {
@@ -191,7 +215,7 @@ class Game {
     });
     Obstacle.speed = 150;
     ScoreSystem.reseyCounter();
-    this.stop = false;
+    this.#state = Game.STATES.PLAY;
   }
 
 
