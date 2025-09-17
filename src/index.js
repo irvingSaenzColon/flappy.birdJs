@@ -24,7 +24,6 @@ async function main() {
 
 function loop(currTime) {
   Timer.setPrevTime(currTime)
-  game.pause = false;
   game.update();
   window.requestAnimationFrame(loop);
 }
@@ -40,6 +39,16 @@ function destroy(e) {
 }
 
 
-document.addEventListener('DOMContentLoaded', (e) => {
-  main();
-})
+document.addEventListener('DOMContentLoaded', main);
+window.onblur = function() {
+  if(game && game instanceof Game) {
+    game.setState("PAUSE");
+  }
+}
+
+
+window.onfocus = function() {
+  if(game && game instanceof Game) {
+    game.setState("PLAY");
+  }
+}
