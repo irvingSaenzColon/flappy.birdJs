@@ -1,6 +1,4 @@
 import CONFIG from "../config.js";
-import Game from "../core/game.js";
-import ResourceLoader from "../core/resourceLoader.js";
 import Score from "../objects/score.js";
 
 
@@ -94,7 +92,7 @@ class ScoreSystem {
   static #counter = 0;
 
 
-  constructor() {
+  constructor(canvasDimensions) {
     const numbersTexture = `${CONFIG.TEXTURES_PATH}/numbers/numbers.png`;
     const transform = {
       translate: { x: 0, y: 0 },
@@ -106,9 +104,11 @@ class ScoreSystem {
       new Score(transform, numbersTexture),
       new Score(transform, numbersTexture),
     ];
+    const width = canvasDimensions.width;
+    const height = canvasDimensions.height;
     this.center = {
-      x: (Game.CANVAS_DIMENSIONS.width / 2) - (Score.getDimensions().width / 2),
-      y: Game.CANVAS_DIMENSIONS.height - (Score.getDimensions().height + ScoreSystem.PADDING.TOP)
+      x: (width / 2) - (Score.getDimensions().width / 2),
+      y: height - (Score.getDimensions().height + ScoreSystem.PADDING.TOP)
     }
     this.scores.forEach(s => {
       s.mesh.transform.translate = { x: this.center.x, y: this.center.y };
@@ -142,12 +142,12 @@ class ScoreSystem {
   }
 
 
-  update() {
+  update(projectionMatrix) {
     const counterSplit = ScoreSystem.#counter.toString().split('');
     for (let i = 0; i < counterSplit.length; i++) {
       this.scores[i].mesh.transform.translate.x = this.center.x + (Score.getDimensions().width * i);
       this.scores[i].mesh.textureCoordinates = ScoreSystem.#numberTexCoord[counterSplit[i]];
-      this.scores[i].update();
+      this.scores[i].update(projectionMatrix);
     }
   }
 

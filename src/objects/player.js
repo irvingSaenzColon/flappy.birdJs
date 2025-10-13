@@ -17,12 +17,12 @@ class Player extends GameObject {
     const width = 54;
     const height = 44;
     const transform = {
-      translate: { x: 100, y: 450},
-      scale: { x: 1, y: 1},
+      translate: { x: 100, y: 450 },
+      scale: { x: 1, y: 1 },
       rotation: 315,
     }
     this.mesh = new Plane(width, height, transform)
-    this.collider = new BoxCollider(-this.mesh.center.x,  -this.mesh.center.y, this.mesh.center.x, this.mesh.center.y);
+    this.collider = new BoxCollider(-this.mesh.center.x, -this.mesh.center.y, this.mesh.center.x, this.mesh.center.y);
     this.hitted = false;
   }
 
