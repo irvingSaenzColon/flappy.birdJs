@@ -142,7 +142,10 @@ class Game {
     }
     this.#state = Game.STATES.READY;
     Input.setup(this.keyBindings);
-    this.canvas.addEventListener('touchstart', () => this.#run());
+    this.canvas.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      this.#run();
+    });
   }
 
 
@@ -174,7 +177,6 @@ class Game {
     if (this.#state !== Game.STATES.PLAY && this.#state !== Game.STATES.STOP) {
       return;
     }
-    this.resize();
     // Clears color buffer
     WebGL.context.clearColor(0.0, 0.0, 0.0, 1.0);
     //Clears depth buffer
