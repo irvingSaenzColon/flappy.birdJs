@@ -134,12 +134,7 @@ class Game {
     //Key bing setup
     this.keyBindings = {
       "Space": () => {
-        if (this.#state === Game.STATES.PAUSE || this.#state === Game.STATES.DONE || this.#state === Game.STATES.STOP) {
-          return;
-        }
-        this.#state = Game.STATES.PLAY;
-        SoundController.play(this.soundType.JUMP);
-        this.player.jump();
+        this.#run();
       },
       "KeyR": () => {
         this.restart();
@@ -147,6 +142,17 @@ class Game {
     }
     this.#state = Game.STATES.READY;
     Input.setup(this.keyBindings);
+    this.canvas.addEventListener('touchstart', () => this.#run());
+  }
+
+
+  #run() {
+    if (this.#state === Game.STATES.PAUSE || this.#state === Game.STATES.DONE || this.#state === Game.STATES.STOP) {
+      return;
+    }
+    this.#state = Game.STATES.PLAY;
+    SoundController.play(this.soundType.JUMP);
+    this.player.jump();
   }
 
 
