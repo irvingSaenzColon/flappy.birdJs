@@ -3,7 +3,7 @@ import Mesh from "./mesh.js";
 
 
 class Plane extends Mesh {
-  
+
 
   /**
    * @param { Number } width 

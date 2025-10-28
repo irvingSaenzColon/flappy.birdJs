@@ -17,12 +17,13 @@ in vec2 v_position;
 in vec2 a_texCoord;
 uniform vec2 resolution;
 uniform mat3 u_worldMatrix;
+uniform mat3 u_projectionMatrix;
 out vec2 v_texCoord;
 void main() {
   vec3 worldPosition = u_worldMatrix * vec3(v_position, 1.0);
-  vec2 clipSpace = ((worldPosition.xy / resolution) * 2.0) - 1.0;
+  vec3 clipSpace = u_projectionMatrix * worldPosition;
   v_texCoord = a_texCoord;
-  gl_Position = vec4(clipSpace, 0.0, 1.0); 
+  gl_Position = vec4(clipSpace.xy, 0.0, 1.0); 
 }`;
 const fragmentShaderSourceCode = `#version 300 es
 precision mediump float;
@@ -43,10 +44,24 @@ void main() {
 
 class Game {
   static MAX_OBSTACLES = 3;
-  static CANVAS_DIMENSIONS = {
-    width: 0,
-    height: 0,
+  static VIRTUAL_DIMENSIONS = {
+    width: 360,
+    height: 640,
   };
+  static STATES = {
+    "NONE": 0,
+    "LOAD": 1,
+    "START": 2,
+    "READY": 3,
+    "PLAY": 4,
+    "PAUSE": 5,
+    "DONE": 6,
+    "STOP": 7,
+  };
+  #state = Game.STATES.NONE;
+  //TODO Create a class that renders a scene, and doing everything inside scene instead of doing it all in game
+  //TODO Refactor a function to calculate real dimension using dpr, remember to devide canvas dimension by dpr
+  //TODO Get rid of that weird scroll of the page
 
 
   /**
@@ -57,8 +72,6 @@ class Game {
       throw new Error('A canvas mus be provided');
     }
     this.canvas = canvas;
-    Game.CANVAS_DIMENSIONS.width = canvas.clientWidth;
-    Game.CANVAS_DIMENSIONS.height = canvas.clientHeight;
     WebGL.initialize(canvas);
     //Define sound types
     this.soundType = {
@@ -66,26 +79,27 @@ class Game {
       "HIT": 2,
       "SCORE": 3
     }
-    this.stop = false;
-    this.pause = true;
-    this.start = true;
+    this.#state = Game.STATES.NONE;
+    this.projectionMatrix = WebGL.getOrthogrpahicMatrix(0, Game.VIRTUAL_DIMENSIONS.width, 0, Game.VIRTUAL_DIMENSIONS.height);
   }
 
 
   onInit() {
-    this.background = new Background(Game.CANVAS_DIMENSIONS, `${CONFIG.TEXTURES_PATH}background/background.day.png`);
-    this.ground = new Ground(Game.CANVAS_DIMENSIONS, `${CONFIG.TEXTURES_PATH}background/ground.png`);
-    this.player = new Player(Game.CANVAS_DIMENSIONS, `${CONFIG.TEXTURES_PATH}bird/default/bird.midflap.png`);
-    Obstacle.restartXLimitter = (Game.CANVAS_DIMENSIONS.width / Game.MAX_OBSTACLES) + Pipe.DEFAULT_WIDTH;
+    this.resize();
+    this.background = new Background(Game.VIRTUAL_DIMENSIONS, `${CONFIG.TEXTURES_PATH}background/background.day.png`);
+    this.ground = new Ground(Game.VIRTUAL_DIMENSIONS, `${CONFIG.TEXTURES_PATH}background/ground.png`);
+    this.player = new Player(Game.VIRTUAL_DIMENSIONS, `${CONFIG.TEXTURES_PATH}bird/default/bird.midflap.png`);
+    Obstacle.restartXLimitter = (Game.VIRTUAL_DIMENSIONS.width / Game.MAX_OBSTACLES) + Pipe.DEFAULT_WIDTH;
     this.obstacles = Array.from({ length: Game.MAX_OBSTACLES }, (_, i) => {
-      let startPosition = Game.CANVAS_DIMENSIONS.width + (Obstacle.restartXLimitter * i);
-      return new Obstacle(startPosition, Game.CANVAS_DIMENSIONS)
+      let startPosition = Game.VIRTUAL_DIMENSIONS.width + (Obstacle.restartXLimitter * i);
+      return new Obstacle(startPosition, Game.VIRTUAL_DIMENSIONS)
     });
-    this.scoreSystem = new ScoreSystem();
+    this.scoreSystem = new ScoreSystem(Game.VIRTUAL_DIMENSIONS);
   }
 
 
   async onLoadResources() {
+    this.#state = Game.STATES.LOAD;
     const resourcesToLoad = [
       `${CONFIG.TEXTURES_PATH}background/background.day.png`,
       `${CONFIG.TEXTURES_PATH}background/ground.png`,
@@ -120,20 +134,39 @@ class Game {
     //Key bing setup
     this.keyBindings = {
       "Space": () => {
-        if (this.pause || this.player.hitted) {
-          return;
-        }
-        if (this.start) {
-          this.start = false;
-        }
-        SoundController.play(this.soundType.JUMP);
-        this.player.jump();
+        this.#run();
       },
       "KeyR": () => {
         this.restart();
       }
     }
+    this.#state = Game.STATES.READY;
     Input.setup(this.keyBindings);
+    this.canvas.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      this.#run();
+    });
+  }
+
+
+  #run() {
+    if (this.#state === Game.STATES.PAUSE || this.#state === Game.STATES.DONE || this.#state === Game.STATES.STOP) {
+      return;
+    }
+    this.#state = Game.STATES.PLAY;
+    SoundController.play(this.soundType.JUMP);
+    this.player.jump();
+  }
+
+
+  resize() {
+    const dpr = window.devicePixelRatio || 1;
+    const displayWidth = Math.floor(this.canvas.clientWidth * dpr);
+    const displayHeight = Math.floor(this.canvas.clientHeight * dpr);
+    if (this.canvas.width !== displayWidth || this.canvas.height !== displayHeight) {
+      this.canvas.width = displayWidth;
+      this.canvas.height = displayHeight;
+    }
   }
 
 
@@ -141,26 +174,24 @@ class Game {
    * @param {number} dt - Delta time, time elapsed since the game is launched
    */
   update(dt) {
-    if (this.stop || this.start) {
+    if (this.#state !== Game.STATES.PLAY && this.#state !== Game.STATES.STOP) {
       return;
     }
-    this.canvas.width = this.canvas.clientWidth;
-    this.canvas.height = this.canvas.clientHeight;
     // Clears color buffer
     WebGL.context.clearColor(0.0, 0.0, 0.0, 1.0);
     //Clears depth buffer
     WebGL.context.clear(WebGL.context.COLOR_BUFFER_BIT | WebGL.context.DEPTH_BUFFER_BIT);
     // Rasterization
-    WebGL.context.viewport(0.0, 0.0, this.canvas.width, this.canvas.height);
-    this.background.update();
-    this.obstacles.forEach(o => o.update());
-    this.ground.update();
-    this.player.update();
+    WebGL.context.viewport(0.0, 0.0, WebGL.context.drawingBufferWidth, WebGL.context.drawingBufferHeight);
+    this.background.update(this.projectionMatrix);
+    this.obstacles.forEach(o => o.update(this.projectionMatrix));
+    this.ground.update(this.projectionMatrix);
+    this.player.update(this.projectionMatrix);
     //Collision detection
     if (this.ground.collider.isColliding(this.player.collider)) {
       this.player.gravity = 0;
       this.player.velocity.y = 0;
-      this.stop = true;
+      this.#state = Game.STATES.DONE;
       if (!this.player.hitted) {
         this.player.hitted = true;
         SoundController.play(this.soundType.HIT);
@@ -171,6 +202,7 @@ class Game {
       const isCollidingBottom = o.pipeBottom.collider.isColliding(this.player.collider)
       if (!this.player.hitted && (isCollidingTop == true || isCollidingBottom == true)) {
         Obstacle.speed = 0;
+        this.#state = Game.STATES.STOP;
         this.player.hitted = true;
         SoundController.play(this.soundType.HIT);
       } else if (!o.gapHitted && o.gapCollider.isColliding(this.player.collider)) {
@@ -179,7 +211,20 @@ class Game {
         SoundController.play(this.soundType.SCORE);
       }
     });
-    this.scoreSystem.update();
+    this.scoreSystem.update(this.projectionMatrix);
+  }
+
+
+  setState(newState) {
+    if (!newState || (newState && !Game.STATES[newState])) {
+      throw new Error("Error: current state doesn't exists, use a defined one");
+    }
+    this.#state = Game.STATES[newState];
+  }
+
+
+  getState() {
+    return this.#state;
   }
 
 
@@ -191,7 +236,7 @@ class Game {
     });
     Obstacle.speed = 150;
     ScoreSystem.reseyCounter();
-    this.stop = false;
+    this.#state = Game.STATES.PLAY;
   }
 
 

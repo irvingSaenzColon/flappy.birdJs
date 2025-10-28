@@ -8,7 +8,6 @@ class Background extends GameObject {
 
 
   /**
-   * 
    * @param { typedef.Dimension } canvasDimensions 
    * @param { String } texture 
    */
@@ -17,8 +16,8 @@ class Background extends GameObject {
     const width = canvasDimensions.width;
     const height = canvasDimensions.height - Ground.GROUND_HEIGHT;
     const transform = {
-      translate: { x: 0, y: Ground.GROUND_HEIGHT},
-      scale: { x: 1, y: 1},
+      translate: { x: 0, y: Ground.GROUND_HEIGHT },
+      scale: { x: 1, y: 1 },
       rotation: 0,
     }
     this.mesh = new Plane(width, height, transform);
