@@ -160,9 +160,10 @@ class Game {
 
 
   resize() {
+    const scale = 0.4;
     const dpr = window.devicePixelRatio || 1;
-    const displayWidth = Math.floor(this.canvas.clientWidth * dpr);
-    const displayHeight = Math.floor(this.canvas.clientHeight * dpr);
+    const displayWidth = Math.floor(this.canvas.clientWidth * dpr * scale);
+    const displayHeight = Math.floor(this.canvas.clientHeight * dpr * scale);
     if (this.canvas.width !== displayWidth || this.canvas.height !== displayHeight) {
       this.canvas.width = displayWidth;
       this.canvas.height = displayHeight;
@@ -182,7 +183,7 @@ class Game {
     //Clears depth buffer
     WebGL.context.clear(WebGL.context.COLOR_BUFFER_BIT | WebGL.context.DEPTH_BUFFER_BIT);
     // Rasterization
-    WebGL.context.viewport(0.0, 0.0, WebGL.context.drawingBufferWidth, WebGL.context.drawingBufferHeight);
+    WebGL.context.viewport(0.0, 0.0, this.canvas.width, this.canvas.height);
     this.background.update(this.projectionMatrix);
     this.obstacles.forEach(o => o.update(this.projectionMatrix));
     this.ground.update(this.projectionMatrix);
