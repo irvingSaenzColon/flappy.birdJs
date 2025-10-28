@@ -15,8 +15,8 @@ class Ground extends GameObject {
     super(textureName, null, null, canvasDimensions, true);
     const width = canvasDimensions.width;
     const transform = {
-      translate: { x: 0, y: 0},
-      scale: { x: 1, y: 1},
+      translate: { x: 0, y: 0 },
+      scale: { x: 1, y: 1 },
       rotation: 0,
     }
     this.mesh = new Plane(width, Ground.GROUND_HEIGHT, transform);

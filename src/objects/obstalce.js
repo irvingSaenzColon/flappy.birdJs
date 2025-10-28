@@ -50,7 +50,7 @@ class Obstacle {
   }
 
 
-  update() {
+  update(projectionMatrix) {
     if (this.pipeBottom.mesh.transform.translate.x < -((Pipe.DEFAULT_WIDTH / 2) + Obstacle.restartXLimitter)) {
       this.xStart = this.canvasDimensions.width;
       this.restart();
@@ -59,8 +59,8 @@ class Obstacle {
       this.pipeTop.mesh.transform.translate.x -= (Obstacle.speed * Timer.getDelta());
       this.gapPosition.x -= (Obstacle.speed * Timer.getDelta());
     }
-    this.pipeBottom.update();
-    this.pipeTop.update();
+    this.pipeBottom.update(projectionMatrix);
+    this.pipeTop.update(projectionMatrix);
     this.gapCollider.update(this.gapPosition);
   }
 

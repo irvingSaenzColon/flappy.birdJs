@@ -25,8 +25,10 @@ class ShaderHandler {
     //Texture coordinates declaration
     this.textureCoordinatesBuffer = null;
     this.textureCoordinatesLocation = null;
+    this.worldMatrixUniformLocation = null;
+    this.projectionMatrixUniformLocation = null;
     this.color = null;
-    if(!this.texture) {
+    if (!this.texture) {
       this.color = [Math.random(), Math.random(), Math.random(), 1];
     }
   }
@@ -53,7 +55,7 @@ class ShaderHandler {
    */
   #setupGeometryBuffer(vertexPosition) {
     this.vertexBufferPosition = WebGL.context.createBuffer();
-    if(this.vertexBufferPosition === null) {
+    if (this.vertexBufferPosition === null) {
       throw new Error('Error while creating buffer');
     }
     WebGL.context.bindBuffer(WebGL.context.ARRAY_BUFFER, this.vertexBufferPosition);
@@ -67,7 +69,7 @@ class ShaderHandler {
   #setupTextureBuffer(texCoord) {
     //Creating texture coordinates buffer
     this.textureCoordinatesBuffer = WebGL.context.createBuffer();
-    if(this.textureCoordinatesBuffer === null) {
+    if (this.textureCoordinatesBuffer === null) {
       throw new Error('Error while creating textCoordBuffer');
     }
     WebGL.context.bindBuffer(WebGL.context.ARRAY_BUFFER, this.textureCoordinatesBuffer);
@@ -78,6 +80,7 @@ class ShaderHandler {
   #setupLocations() {
     this.resolutionUniformLocation = WebGL.getUniformLocation(this.shaderProgram, 'resolution');
     this.worldMatrixUniformLocation = WebGL.getUniformLocation(this.shaderProgram, 'u_worldMatrix');
+    this.projectionMatrixUniformLocation = WebGL.getUniformLocation(this.shaderProgram, 'u_projectionMatrix');
     this.samplerUniformLocation = WebGL.getUniformLocation(this.shaderProgram, "u_texture");
   }
 
@@ -92,7 +95,7 @@ class ShaderHandler {
     this.#setup(vertexShaderCode, fragmentShaderCode);
     //Setup geometry
     this.#setupGeometryBuffer(vertexPosition);
-    if(this.texture) {
+    if (this.texture) {
       this.texture.setupTexture();
       //Setup texture
       this.#setupTextureBuffer(texCoord);
@@ -108,7 +111,7 @@ class ShaderHandler {
    * @param { typedef.Dimension } canvas
    * @param { Array<Number> } wordlMatrix
    */
-  update(vertex, texCoord, canvas, wordlMatrix) {
+  update(vertex, texCoord, canvas, wordlMatrix, projectionMatrix) {
     WebGL.context.useProgram(this.shaderProgram);
     //Vertext attribute location assign
     WebGL.context.enableVertexAttribArray(this.vertexPositionAttrLocation);
@@ -119,9 +122,10 @@ class ShaderHandler {
     WebGL.context.bindBuffer(WebGL.context.ARRAY_BUFFER, this.textureCoordinatesBuffer);
     WebGL.context.bufferData(WebGL.context.ARRAY_BUFFER, texCoord, WebGL.context.STATIC_DRAW);
     WebGL.context.vertexAttribPointer(this.textureCoordinatesAttrLocation, 2, WebGL.context.FLOAT, false, 2 * Float32Array.BYTES_PER_ELEMENT, 0);
-    WebGL.context.uniform2f(this.resolutionUniformLocation, canvas.width, canvas.height);
+    WebGL.context.uniform2f(this.resolutionUniformLocation, WebGL.context.drawingBufferWidth, WebGL.context.drawingBufferHeight);
     WebGL.context.uniformMatrix3fv(this.worldMatrixUniformLocation, false, wordlMatrix);
-    if(this.texture) {
+    WebGL.context.uniformMatrix3fv(this.projectionMatrixUniformLocation, false, projectionMatrix);
+    if (this.texture) {
       this.texture.bind(0, this.samplerUniformLocation);
     }
     WebGL.context.drawArrays(WebGL.context.TRIANGLES, 0, (vertex.length / 2));

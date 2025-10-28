@@ -3,7 +3,7 @@ class WebGL {
   static context = null;
 
 
-  constructor() {}
+  constructor() { }
 
 
   /**
@@ -13,10 +13,10 @@ class WebGL {
   static initialize(canvas) {
     try {
       this.context = canvas.getContext('webgl2');
-      if(this.context === null) {
+      if (this.context === null) {
         throw new Error('Unable to initialize WebGL. Your browser or machine may not support it.');
       }
-    } catch(e) {
+    } catch (e) {
       console.error(e);
     }
   }
@@ -29,19 +29,19 @@ class WebGL {
    * @returns {WebGLShader}
    */
   static createShader(type, sourceCode) {
-    if(!sourceCode) {
+    if (!sourceCode) {
       throw new Error('Missing shader source code');
     }
-    if(!type) {
+    if (!type) {
       throw new Error("Shader type must be provided");
     }
     const shader = this.context.createShader(type);
-    if(!shader) {
+    if (!shader) {
       throw new Error('Could not allocate vertex shader');
     }
     this.context.shaderSource(shader, sourceCode);
     this.context.compileShader(shader);
-    if(!this.context.getShaderParameter(shader, this.context.COMPILE_STATUS)) {
+    if (!this.context.getShaderParameter(shader, this.context.COMPILE_STATUS)) {
       const compileError = this.context.getShaderInfoLog(shader);
       this.context.deleteShader(shader);
       throw new Error(`${type === this.context.VERTEX_SHADER ? 'Vertex' : 'Fragment'} shader compile error: ${compileError}`);
@@ -60,7 +60,7 @@ class WebGL {
     this.context.attachShader(program, vertexShader);
     this.context.attachShader(program, fragmentShader);
     this.context.linkProgram(program);
-    if(!this.context.getProgramParameter(program, this.context.LINK_STATUS)) {
+    if (!this.context.getProgramParameter(program, this.context.LINK_STATUS)) {
       const linkError = this.context.getProgramInfoLog(program);
       this.context.deleteProgram(program);
       throw new Error(`Link program error: ${linkError}`);
@@ -76,7 +76,7 @@ class WebGL {
    */
   static getAttributeLocation(shaderProgram, name) {
     const attrLocation = this.context.getAttribLocation(shaderProgram, name);
-    if(attrLocation < 0) {
+    if (attrLocation < 0) {
       throw new Error(`Failed to get attribute location for ${name}`);
     }
     return attrLocation;
@@ -90,10 +90,21 @@ class WebGL {
    */
   static getUniformLocation(shaderProgram, name) {
     const attrLocation = this.context.getUniformLocation(shaderProgram, name);
-    if(attrLocation < 0) {
+    if (attrLocation < 0) {
       throw new Error(`Failed to get attribute location`);
     }
     return attrLocation;
+  }
+
+
+  static getOrthogrpahicMatrix(left, right, bottom, top) {
+    return new Float32Array([
+      2 / (right - left), 0, 0,
+      0, 2 / (top - bottom), 0,
+      - (right + left) / (right - left),
+      - (top + bottom) / (top - bottom),
+      1
+    ]);
   }
 }
 
