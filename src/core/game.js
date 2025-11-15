@@ -160,8 +160,8 @@ class Game {
 
 
   resize() {
-    const scale = 0.4;
-    const dpr = window.devicePixelRatio || 1;
+    const scale = 1;
+    const dpr = 1;
     const displayWidth = Math.floor(this.canvas.clientWidth * dpr * scale);
     const displayHeight = Math.floor(this.canvas.clientHeight * dpr * scale);
     if (this.canvas.width !== displayWidth || this.canvas.height !== displayHeight) {
