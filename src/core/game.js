@@ -134,7 +134,7 @@ class Game {
     //Key bing setup
     this.keyBindings = {
       "Space": () => {
-        this.#run();
+        //this.#run();
       },
       "KeyR": () => {
         this.restart();
@@ -154,7 +154,7 @@ class Game {
       return;
     }
     this.#state = Game.STATES.PLAY;
-    SoundController.play(this.soundType.JUMP);
+    //SoundController.play(this.soundType.JUMP);
     this.player.jump();
   }
 
