@@ -145,7 +145,7 @@ class Game {
     this.canvas.addEventListener('touchstart', (e) => {
       e.preventDefault();
       this.#run();
-    });
+    }, { passive: true });
   }
 
 
