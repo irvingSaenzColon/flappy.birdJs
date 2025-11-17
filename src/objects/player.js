@@ -29,7 +29,7 @@ class Player extends GameObject {
 
   restart() {
     this.hitted = false;
-    this.gravity = 2500;
+    this.gravity = 0;
     this.mesh.transform.translate = { x: 100, y: 450 };
     this.velocity.x = 0;
     this.velocity.y = 0;
@@ -38,7 +38,7 @@ class Player extends GameObject {
 
   jump() {
     this.velocity.y = 625;
-    this.mesh.transform.rotation = 315;
+    //this.mesh.transform.rotation = 315;
   }
 
 
