@@ -134,7 +134,7 @@ class Game {
     //Key bing setup
     this.keyBindings = {
       "Space": () => {
-        //this.#run();
+        this.#run();
       },
       "KeyR": () => {
         this.restart();
