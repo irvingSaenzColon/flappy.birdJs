@@ -185,10 +185,9 @@ class Game {
     // Rasterization
     WebGL.context.viewport(0.0, 0.0, this.canvas.width, this.canvas.height);
     this.background.update(this.projectionMatrix);
-    //this.obstacles.forEach(o => o.update(this.projectionMatrix));
+    this.obstacles.forEach(o => o.update(this.projectionMatrix));
     this.ground.update(this.projectionMatrix);
     this.player.update(this.projectionMatrix);
-    /*
     //Collision detection
     if (this.ground.collider.isColliding(this.player.collider)) {
       this.player.gravity = 0;
@@ -214,7 +213,6 @@ class Game {
       }
     });
     this.scoreSystem.update(this.projectionMatrix);
-    */
   }
 
 
