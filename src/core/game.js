@@ -153,7 +153,9 @@ class Game {
     if (this.#state === Game.STATES.PAUSE || this.#state === Game.STATES.DONE || this.#state === Game.STATES.STOP) {
       return;
     }
-    this.#state = Game.STATES.PLAY;
+    if (this.#state === Game.STATES.READY) {
+      this.#state = Game.STATES.PLAY;
+    }
     //SoundController.play(this.soundType.JUMP);
     this.player.jump();
   }

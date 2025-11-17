@@ -38,7 +38,7 @@ class Player extends GameObject {
 
   jump() {
     this.velocity.y = 625;
-    this.mesh.transform.rotation = 315;
+    //this.mesh.transform.rotation = 315;
   }
 
 
