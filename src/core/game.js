@@ -43,7 +43,7 @@ void main() {
 
 
 class Game {
-  static MAX_OBSTACLES = 3;
+  static MAX_OBSTACLES = 1;
   static VIRTUAL_DIMENSIONS = {
     width: 360,
     height: 640,
