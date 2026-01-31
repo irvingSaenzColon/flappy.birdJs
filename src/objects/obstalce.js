@@ -8,7 +8,7 @@ import CONFIG from "../config.js";
 class Obstacle {
   static speed = 150;
   static yOffset = 200;
-  static yLimitPos = { min: -200, max: 60 };
+  static yLimitPos = { min: -200, max: 35 };
   static restartXLimitter = 0;
 
 

@@ -34,6 +34,22 @@ class BoxCollider extends Collider {
   }
 
 
+	setPoints(xStart, yStart, xEnd, yEnd) {
+		if (!this.points || (this.points && !this.points.length)) {
+			this.points = Array(8).fill(0);
+		}
+		this.points[BoxCollider.INDEX.X_BOTTOM_LEFT] = xStart;
+		this.points[BoxCollider.INDEX.Y_BOTTOM_LEFT] = yStart;
+		this.points[BoxCollider.INDEX.X_BOTTOM_RIGHT] = xEnd;
+		this.points[BoxCollider.INDEX.Y_BOTTOM_RIGHT] = yStart;
+		this.points[BoxCollider.INDEX.X_UPPER_LEFT] = xStart;
+		this.points[BoxCollider.INDEX.Y_UPPER_LEFT] = yEnd;
+		this.points[BoxCollider.INDEX.X_UPPER_RIGHT] = xEnd;
+		this.points[BoxCollider.INDEX.Y_UPPER_RIGHT] = yEnd;
+    this.#localPoints = [...this.points]
+	}
+
+
   /**
    * @param { typedef.Vec2 } position
    */

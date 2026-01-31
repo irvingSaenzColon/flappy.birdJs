@@ -5,8 +5,8 @@ import Obstacle from "../objects/obstalce.js";
 import Player from "../objects/player.js";
 import Pipe from "../objects/pipe.js";
 import Input from "./input.js";
-import SoundController from "./sound.js";
 import Background from "../objects/background.js";
+import BoxCollider from "../collision/boxCollider.js";
 import ScoreSystem from "../UI/scoreSystem.js";
 import ResourceLoader from "./resourceLoader.js";
 
@@ -59,9 +59,16 @@ class Game {
     "STOP": 7,
   };
   #state = Game.STATES.NONE;
-  //TODO Create a class that renders a scene, and doing everything inside scene instead of doing it all in game
-  //TODO Refactor a function to calculate real dimension using dpr, remember to devide canvas dimension by dpr
-  //TODO Get rid of that weird scroll of the page
+  //DONE - Add collision to the top of the screen to prevent player going outside of the view
+  //TODO Refactor the way it load things
+  //TODO Add sound effects
+	//TODO Add loading screen
+	//TODO Add start menu
+	//TODO Add in a single file all the assets
+	//TODO Add a high score system
+	//TODO Add an lose menu
+	//TODO Add UI to retry the game
+	//TODO Improve obstacles
 
 
   /**
@@ -95,6 +102,7 @@ class Game {
       return new Obstacle(startPosition, Game.VIRTUAL_DIMENSIONS)
     });
     this.scoreSystem = new ScoreSystem(Game.VIRTUAL_DIMENSIONS);
+		this.topCollision = new BoxCollider(0, Game.VIRTUAL_DIMENSIONS.height + 80, Game.VIRTUAL_DIMENSIONS.width, Game.VIRTUAL_DIMENSIONS.height + 110);
   }
 
 
@@ -126,11 +134,6 @@ class Game {
     for (let i = 0; i < this.obstacles.length; i++) {
       this.obstacles[i].render(vertexShaderCode, fragmentShaderSourceCode);
     }
-    //Setup sound effects
-    SoundController.SOUND_FOLDER = './src/assets/sounds/';
-    SoundController.createAudio(this.soundType.JUMP, "wing.wav");
-    SoundController.createAudio(this.soundType.HIT, "hit.wav");
-    SoundController.createAudio(this.soundType.SCORE, "point.wav");
     //Key bing setup
     this.keyBindings = {
       "Space": () => {
@@ -140,12 +143,12 @@ class Game {
         this.restart();
       }
     }
-    this.#state = Game.STATES.READY;
     Input.setup(this.keyBindings);
     this.canvas.addEventListener('touchstart', (e) => {
       e.preventDefault();
       this.#run();
-    }, { passive: true });
+    });
+    this.#state = Game.STATES.READY;
   }
 
 
@@ -156,7 +159,6 @@ class Game {
     if (this.#state === Game.STATES.READY) {
       this.#state = Game.STATES.PLAY;
     }
-    //SoundController.play(this.soundType.JUMP);
     this.player.jump();
   }
 
@@ -197,7 +199,6 @@ class Game {
       this.#state = Game.STATES.DONE;
       if (!this.player.hitted) {
         this.player.hitted = true;
-        //SoundController.play(this.soundType.HIT);
       }
     }
     this.obstacles.forEach(o => {
@@ -207,13 +208,16 @@ class Game {
         Obstacle.speed = 0;
         this.#state = Game.STATES.STOP;
         this.player.hitted = true;
-        //SoundController.play(this.soundType.HIT);
       } else if (!o.gapHitted && o.gapCollider.isColliding(this.player.collider)) {
         o.gapHitted = true;
         ScoreSystem.increaseCounter();
-        //SoundController.play(this.soundType.SCORE);
       }
     });
+		if (this.topCollision.isColliding(this.player.collider)) {
+				Obstacle.speed = 0;
+        this.#state = Game.STATES.STOP;
+        this.player.hitted = true;
+		}
     this.scoreSystem.update(this.projectionMatrix);
   }
 
