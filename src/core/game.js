@@ -145,7 +145,7 @@ class Game {
     this.canvas.addEventListener('touchstart', (e) => {
       e.preventDefault();
       this.#run();
-    });
+    }, { passive: true });
   }
 
 
@@ -153,8 +153,10 @@ class Game {
     if (this.#state === Game.STATES.PAUSE || this.#state === Game.STATES.DONE || this.#state === Game.STATES.STOP) {
       return;
     }
-    this.#state = Game.STATES.PLAY;
-    SoundController.play(this.soundType.JUMP);
+    if (this.#state === Game.STATES.READY) {
+      this.#state = Game.STATES.PLAY;
+    }
+    //SoundController.play(this.soundType.JUMP);
     this.player.jump();
   }
 
@@ -195,7 +197,7 @@ class Game {
       this.#state = Game.STATES.DONE;
       if (!this.player.hitted) {
         this.player.hitted = true;
-        SoundController.play(this.soundType.HIT);
+        //SoundController.play(this.soundType.HIT);
       }
     }
     this.obstacles.forEach(o => {
@@ -205,11 +207,11 @@ class Game {
         Obstacle.speed = 0;
         this.#state = Game.STATES.STOP;
         this.player.hitted = true;
-        SoundController.play(this.soundType.HIT);
+        //SoundController.play(this.soundType.HIT);
       } else if (!o.gapHitted && o.gapCollider.isColliding(this.player.collider)) {
         o.gapHitted = true;
         ScoreSystem.increaseCounter();
-        SoundController.play(this.soundType.SCORE);
+        //SoundController.play(this.soundType.SCORE);
       }
     });
     this.scoreSystem.update(this.projectionMatrix);
