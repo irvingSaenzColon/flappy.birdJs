@@ -147,7 +147,8 @@ class ScoreSystem {
     for (let i = 0; i < counterSplit.length; i++) {
       this.scores[i].mesh.transform.translate.x = this.center.x + (Score.getDimensions().width * i);
       this.scores[i].mesh.textureCoordinates = ScoreSystem.#numberTexCoord[counterSplit[i]];
-      this.scores[i].update(projectionMatrix);
+      this.scores[i].update();
+			this.scores[i].draw(projectionMatrix);
     }
   }
 

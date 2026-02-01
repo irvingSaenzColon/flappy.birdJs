@@ -30,7 +30,13 @@ class GameObject {
   }
 
 
-  update(projectionMatrix) {
+	draw(projectionMatrix) {
+		this.mesh.calculateTransform();
+    this.shader.update(this.mesh.vertex, this.mesh.textureCoordinates, this.canvasDimensions, this.mesh.worldMatrix, projectionMatrix);
+	}
+
+
+  update() {
     if (this.gravity) {
       this.velocity.y -= (this.gravity * Timer.getDelta());
       if (this.mesh.transform.rotation < 450) {
@@ -41,8 +47,6 @@ class GameObject {
     if (this.collider) {
       this.collider.update(this.mesh.transform.translate);
     }
-    this.mesh.calculateTransform();
-    this.shader.update(this.mesh.vertex, this.mesh.textureCoordinates, this.canvasDimensions, this.mesh.worldMatrix, projectionMatrix);
   }
 
 

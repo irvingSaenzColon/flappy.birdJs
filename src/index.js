@@ -3,11 +3,9 @@ import Game from "./core/game.js";
 import Timer from "./core/Timer.js";
 
 const canvas = document.getElementById('buffer');
+const loadingScreen = document.getElementById('loading-screen');
 let game = null;
 let idReqAnim = -1;
-//TODO first i gotta do responsive canvas
-//TODO Check device pixel ratio, if it is one it should be look normal but if it is higher it means that i need to scale things up
-//TODO If the window is x widder it means that i should have more obstacles spawned
 
 
 async function main() {
@@ -16,6 +14,9 @@ async function main() {
     game.onInit();
     await game.onLoadResources();
     game.setup();
+		loadingScreen.classList.add("loading-screen--out");
+		loadingScreen.addEventListener("animationend", onFadeOutFinish);
+		game.draw();
     window.requestAnimationFrame(loop);
     window.removeEventListener('beforeunload', destroy);
   } catch (e) {
@@ -53,4 +54,13 @@ window.onfocus = function() {
   if (game && game instanceof Game) {
     game.setState("PLAY");
   }
+}
+
+
+function onFadeOutFinish(e) {
+	if (!loadingScreen) {
+		return;
+	}
+	loadingScreen.removeEventListener("animationend", this);
+	loadingScreen.remove();
 }

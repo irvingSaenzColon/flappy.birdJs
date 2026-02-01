@@ -59,10 +59,17 @@ class Obstacle {
       this.pipeTop.mesh.transform.translate.x -= (Obstacle.speed * Timer.getDelta());
       this.gapPosition.x -= (Obstacle.speed * Timer.getDelta());
     }
-    this.pipeBottom.update(projectionMatrix);
-    this.pipeTop.update(projectionMatrix);
+    this.pipeBottom.update();
+    this.pipeTop.update();
     this.gapCollider.update(this.gapPosition);
   }
+
+
+	
+	draw(projectionMatrix) {
+		this.pipeBottom.draw(projectionMatrix)
+		this.pipeTop.draw(projectionMatrix)
+	}
 
 
   restart() {

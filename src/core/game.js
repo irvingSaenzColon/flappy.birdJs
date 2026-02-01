@@ -62,12 +62,12 @@ class Game {
   //DONE - Add collision to the top of the screen to prevent player going outside of the view
   //TODO Refactor the way it load things
   //TODO Add sound effects
-	//TODO Add loading screen
+	//DONE - Add loading screen
 	//TODO Add start menu
 	//TODO Add in a single file all the assets
-	//TODO Add a high score system
-	//TODO Add an lose menu
-	//TODO Add UI to retry the game
+	//TODO Add a high score system local storage
+	//TODO Add a lose UI
+	//TODO Add UI to show final score
 	//TODO Improve obstacles
 
 
@@ -175,6 +175,20 @@ class Game {
   }
 
 
+	draw() {
+    // Clears color buffer
+    WebGL.context.clearColor(0.0, 0.0, 0.0, 1.0);
+		//Clears depth buffer
+    WebGL.context.clear(WebGL.context.COLOR_BUFFER_BIT | WebGL.context.DEPTH_BUFFER_BIT);
+    // Rasterization
+    WebGL.context.viewport(0.0, 0.0, this.canvas.width, this.canvas.height);
+		this.background.draw(this.projectionMatrix);
+		this.obstacles.forEach(o => o.draw(this.projectionMatrix));
+    this.ground.draw(this.projectionMatrix);
+    this.player.draw(this.projectionMatrix);	
+	}
+
+
   /**
    * @param {number} dt - Delta time, time elapsed since the game is launched
    */
@@ -182,14 +196,9 @@ class Game {
     if (this.#state !== Game.STATES.PLAY && this.#state !== Game.STATES.STOP) {
       return;
     }
-    // Clears color buffer
-    WebGL.context.clearColor(0.0, 0.0, 0.0, 1.0);
-    //Clears depth buffer
-    WebGL.context.clear(WebGL.context.COLOR_BUFFER_BIT | WebGL.context.DEPTH_BUFFER_BIT);
-    // Rasterization
-    WebGL.context.viewport(0.0, 0.0, this.canvas.width, this.canvas.height);
+    
     this.background.update(this.projectionMatrix);
-    this.obstacles.forEach(o => o.update(this.projectionMatrix));
+    this.obstacles.forEach(o => o.update());
     this.ground.update(this.projectionMatrix);
     this.player.update(this.projectionMatrix);
     //Collision detection
@@ -218,6 +227,7 @@ class Game {
         this.#state = Game.STATES.STOP;
         this.player.hitted = true;
 		}
+		this.draw();
     this.scoreSystem.update(this.projectionMatrix);
   }
 

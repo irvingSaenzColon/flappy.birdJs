@@ -4,6 +4,12 @@
   box-sizing: border-box;
 }
 
+
+html {
+	font-size: 16.5%;
+	font-family: sans;
+}
+
 body {
   width: 100vw;
   height: 100vh;
@@ -17,6 +23,23 @@ body {
   background-color: #02010f;
 }
 
+.loading-screen {
+	display: flex;
+	width: 100%;
+	height: 100%;
+	justify-content: center;
+	align-items: center;
+	font-size: 55.4rem;
+	background-color: #dfd996;
+}
+
+
+.loading-screen--out {
+	animation-name: fade-out;
+	animation-duration: 1.5s;
+	animation-fill-mode: forwards;
+}
+
 
 @media screen and (min-width: 900px) {
   #buffer {
@@ -26,4 +49,15 @@ body {
     aspect-ratio: 9 / 16;
     height: 100%;
   }
+}
+
+@keyframes fade-out {
+	0% {
+		color: #262626ff;
+		background-color: #dfd996ff;
+	}
+	100% {
+		color: #26262600;
+		background-color: #26262600;
+	}
 }
