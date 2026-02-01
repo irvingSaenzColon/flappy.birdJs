@@ -15,7 +15,7 @@ class Pipe extends GameObject {
    */
   constructor(canvasDimensions, texture) {
 		const xOffset = 20;
-		const yOffset = 20;
+		const yOffset = 0;
     super(texture, null, null, canvasDimensions, true);
     const tranform = {
       translate: {x: 0, y: 0},
