@@ -58,22 +58,7 @@ class Game {
     "STOP": 7,
   };
   #state = Game.STATES.NONE;
-  //DONE - Add collision to the top of the screen to prevent player going outside of the view
-  //TODO Refactor the way it load things
-  //TODO Add sound effects
-	//TODO Add start menu
-	//	- A Screen with start and score button
-	//	- Title of the game bouncing up and down with the bird
-	//	- Detect when it click on the button start
-	//TODO Add in a single file all the assets
-	//TODO Add a high score system local storage
-	//TODO Add a lose UI
-	//TODO Add UI to show final score
-	//TODO Add player animation (when the bird flapps)
-	//TODO Improve obstacles
-  //TODO Bug: when the player hits something i can still flap
-  //TODO Bud: when the game looses focus and it gets back to it continue rendering
-  //DONE: Add a little bit of a style to loading screeen
+
 
 
   /**
@@ -158,7 +143,7 @@ class Game {
 
 
   #run() {
-    if (this.#state === Game.STATES.PAUSE || this.#state === Game.STATES.DONE || this.#state === Game.STATES.STOP) {
+    if (this.#state === Game.STATES.PAUSE || this.#state === Game.STATES.DONE || this.#state === Game.STATES.STOP || this.player.hitted) {
       return;
     }
     if (this.#state === Game.STATES.READY) {
@@ -228,7 +213,7 @@ class Game {
       const isCollidingTop = o.pipeTop.collider.isColliding(this.player.collider);
       const isCollidingBottom = o.pipeBottom.collider.isColliding(this.player.collider)
       if (!this.player.hitted && (isCollidingTop == true || isCollidingBottom == true)) {
-				Obstacle.speed = 0;
+        Obstacle.speed = 0;
         this.player.hitted = true;
       } else if (!o.gapHitted && o.gapCollider.isColliding(this.player.collider)) {
         o.gapHitted = true;
