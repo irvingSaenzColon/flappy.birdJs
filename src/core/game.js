@@ -8,6 +8,7 @@ import Background from "../objects/background.js";
 import BoxCollider from "../collision/boxCollider.js";
 import ScoreSystem from "../UI/scoreSystem.js";
 import ResourceLoader from "./resourceLoader.js";
+import Input from "./input.js";
 
 
 const vertexShaderCode = `#version 300 es
