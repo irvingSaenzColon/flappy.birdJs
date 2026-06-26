@@ -39,6 +39,9 @@ class GameObject {
   update() {
     if (this.gravity) {
       this.velocity.y -= (this.gravity * Timer.getDelta());
+      if (this.velocity.y < -950) {
+        this.velocity.y = -950;
+      }
       if (this.mesh.transform.rotation < 450) {
         this.mesh.transform.rotation += (150 * Timer.getDelta());
       }

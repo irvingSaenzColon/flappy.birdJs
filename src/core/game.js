@@ -132,10 +132,11 @@ class Game {
           this.#run();
         } else if (this.#state !== Game.STATES.DONE) {
           this.#state = Game.STATES.PLAY;
+          this.#run();
         }
       },
       "KeyP": () => {
-        if (this.#state === Game.STATES.DONE) {
+        if (this.#state === Game.STATES.DONE || this.player.hitted) {
           return;
         } else if (this.#state === Game.STATES.PAUSE) {
           this.#state = Game.STATES.PLAY;
