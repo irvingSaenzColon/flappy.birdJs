@@ -10,13 +10,13 @@
 - [ ]   Add: a lose UI
 - [ ]   Add: UI to show final score
 - [ ]   Add: player animation (when the bird flapps)
-- [x]   Add: a little bit of a style to loading screeen - DONE
+- [x]   Add: a little bit of a style to loading screeen
 
 
 ## Bugs
 
 - [x]   Bug: when the player hits something i can still flap
-- [ ]   Bug: when the game looses focus and it gets back to it continue rendering
+- [x]   Bug: when the game looses focus and it gets back to it continue rendering
 
 ## Refactor
 
