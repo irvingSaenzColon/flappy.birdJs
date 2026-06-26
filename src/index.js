@@ -4,6 +4,7 @@ import Timer from "./core/Timer.js";
 
 const canvas = document.getElementById('buffer');
 const loadingScreen = document.getElementById('loading-screen');
+const img = loadingScreen.getElementsByTagName("img");
 let game = null;
 let idReqAnim = -1;
 

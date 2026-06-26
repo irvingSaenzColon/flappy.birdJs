@@ -10,9 +10,9 @@ class Mesh {
    * 
    * @param { typedef.Transform } transform 
    */
-  constructor(transform) {
+  constructor(transform, texCoord = []) {
     this.vertex = [];
-    this.textureCoordinates = [];
+    this.textureCoordinates = texCoord;
     this.transform = transform
     this.worldMatrix = Matrix.identity();
   }

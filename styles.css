@@ -31,13 +31,27 @@ body {
 	align-items: center;
 	font-size: 55.4rem;
 	background-color: #dfd996;
+  opacity: 1;
+  transition: opacity 1.5s linear;
+}
+
+.loading-screen > img {
+  animation-name: flapp-loading;
+  animation-duration: 1.3s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  opacity: 1;
+  transition: opacity 1.5s linear;
+}
+
+
+.loading-screen__img--fade-out {
+  opacity: 0;
 }
 
 
 .loading-screen--out {
-	animation-name: fade-out;
-	animation-duration: 1.5s;
-	animation-fill-mode: forwards;
+  opacity: 0;
 }
 
 
@@ -51,13 +65,14 @@ body {
   }
 }
 
-@keyframes fade-out {
-	0% {
-		color: #262626ff;
-		background-color: #dfd996ff;
-	}
-	100% {
-		color: #26262600;
-		background-color: #26262600;
-	}
+@keyframes flapp-loading {
+  0% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(0, 20rem);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
 }

@@ -10,8 +10,8 @@ class Plane extends Mesh {
    * @param { Number } height 
    * @param { typedef.Transform } tranform 
    */
-  constructor(width, height, tranform) {
-    super(tranform);
+  constructor(width, height, tranform, texCoord = []) {
+    super(tranform, texCoord);
     this.center = {
       x: width / 2,
       y: height / 2,

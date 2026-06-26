@@ -4,7 +4,6 @@ import Ground from "../objects/ground.js";
 import Obstacle from "../objects/obstalce.js";
 import Player from "../objects/player.js";
 import Pipe from "../objects/pipe.js";
-import Input from "./input.js";
 import Background from "../objects/background.js";
 import BoxCollider from "../collision/boxCollider.js";
 import ScoreSystem from "../UI/scoreSystem.js";
@@ -62,13 +61,19 @@ class Game {
   //DONE - Add collision to the top of the screen to prevent player going outside of the view
   //TODO Refactor the way it load things
   //TODO Add sound effects
-	//DONE - Add loading screen
 	//TODO Add start menu
+	//	- A Screen with start and score button
+	//	- Title of the game bouncing up and down with the bird
+	//	- Detect when it click on the button start
 	//TODO Add in a single file all the assets
 	//TODO Add a high score system local storage
 	//TODO Add a lose UI
 	//TODO Add UI to show final score
+	//TODO Add player animation (when the bird flapps)
 	//TODO Improve obstacles
+  //TODO Bug: when the player hits something i can still flap
+  //TODO Bud: when the game looses focus and it gets back to it continue rendering
+  //DONE: Add a little bit of a style to loading screeen
 
 
   /**
@@ -193,11 +198,20 @@ class Game {
    * @param {number} dt - Delta time, time elapsed since the game is launched
    */
   update(dt) {
-    if (this.#state !== Game.STATES.PLAY && this.#state !== Game.STATES.STOP) {
-      return;
-    }
-    
-    this.background.update(this.projectionMatrix);
+		if (this.#state === Game.STATES.PLAY) {
+			this.updateGame();
+		} else if (this.#state === Game.STATES.DONE) {
+			console.log("The game finished with a score: ", ScoreSystem.getCounter());
+			// This needs to be saved on local storage but only if it is the highest score.
+			// It also needs to be displayed the i loose menu
+		} else if (this.#state === Game.STATES.PAUSE) {
+			// Do something with pause menu
+		}
+  }
+
+
+	updateGame() {
+	  this.background.update(this.projectionMatrix);
     this.obstacles.forEach(o => o.update());
     this.ground.update(this.projectionMatrix);
     this.player.update(this.projectionMatrix);
@@ -214,8 +228,7 @@ class Game {
       const isCollidingTop = o.pipeTop.collider.isColliding(this.player.collider);
       const isCollidingBottom = o.pipeBottom.collider.isColliding(this.player.collider)
       if (!this.player.hitted && (isCollidingTop == true || isCollidingBottom == true)) {
-        Obstacle.speed = 0;
-        this.#state = Game.STATES.STOP;
+				Obstacle.speed = 0;
         this.player.hitted = true;
       } else if (!o.gapHitted && o.gapCollider.isColliding(this.player.collider)) {
         o.gapHitted = true;
@@ -223,13 +236,12 @@ class Game {
       }
     });
 		if (this.topCollision.isColliding(this.player.collider)) {
-				Obstacle.speed = 0;
-        this.#state = Game.STATES.STOP;
-        this.player.hitted = true;
+			Obstacle.speed = 0;
+			this.player.hitted = true;
 		}
 		this.draw();
-    this.scoreSystem.update(this.projectionMatrix);
-  }
+    this.scoreSystem.update(this.projectionMatrix);	
+	}
 
 
   setState(newState) {
