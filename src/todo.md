@@ -15,7 +15,7 @@
 
 ## Bugs
 
-- [ ]   Bug: when the player hits something i can still flap
+- [x]   Bug: when the player hits something i can still flap
 - [ ]   Bug: when the game looses focus and it gets back to it continue rendering
 
 ## Refactor

@@ -128,7 +128,20 @@ class Game {
     //Key bing setup
     this.keyBindings = {
       "Space": () => {
-        this.#run();
+        if (this.#state === Game.STATES.PLAY) {
+          this.#run();
+        } else if (this.#state !== Game.STATES.DONE) {
+          this.#state = Game.STATES.PLAY;
+        }
+      },
+      "KeyP": () => {
+        if (this.#state === Game.STATES.DONE) {
+          return;
+        } else if (this.#state === Game.STATES.PAUSE) {
+          this.#state = Game.STATES.PLAY;
+        } else {
+          this.#state = Game.STATES.PAUSE;
+        }
       },
       "KeyR": () => {
         this.restart();

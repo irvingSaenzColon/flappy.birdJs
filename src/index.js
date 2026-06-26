@@ -51,13 +51,6 @@ window.onblur = function() {
 }
 
 
-window.onfocus = function() {
-  if (game && game instanceof Game) {
-    game.setState("PLAY");
-  }
-}
-
-
 function onFadeOutFinish(e) {
 	if (!loadingScreen) {
 		return;
